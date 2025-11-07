@@ -59,7 +59,7 @@ export default function SettingsPage() {
               className={`px-4 py-1.5 text-sm sm:text-base font-medium rounded-xl transition-all duration-200 flex-shrink-0 cursor-pointer
                 ${
                   activeTab === tab
-                    ? "bg-[var(--inside-card-bg)] text-[var(--violet-text)] border border-[var(--violet-text)]"
+                    ? "bg-[var(--inside-card-bg)] text-[var(--accent-color)] border border-[var(--accent-color)]"
                     : "text-[var(--light-text)] hover:text-[var(--text-primary)] hover:bg-[var(--hover-bg)] border border-transparent"
                 }`}
             >

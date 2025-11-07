@@ -1,5 +1,3 @@
-import React from "react";
-
 type ActionDropdownProps = {
   onViewDetails?: () => void;
   onEditProject?: () => void;
@@ -21,12 +19,12 @@ export default function ActionDropdown({
   ];
 
   return (
-    <div className="bg-white z-10 shadow-md rounded-md border border-gray-200 p-2 w-40">
+    <div className="bg-[var(--bg)] z-10 shadow-md rounded-md border border-[var(--border)] p-2 w-40">
       {actions.map((item, index) => (
         <button
           key={index}
           onClick={item.onClick}
-          className="w-full cursor-pointer text-left px-3 py-2 text-sm hover:bg-violet-100 rounded-md"
+          className="w-full cursor-pointer text-left px-3 py-2 text-sm hover:bg-[var(--hover-bg)] rounded-md"
         >
           {item.label}
         </button>

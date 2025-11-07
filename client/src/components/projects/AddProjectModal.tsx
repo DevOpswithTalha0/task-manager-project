@@ -279,12 +279,14 @@ export default function AddProjectModal({
                 }}
                 disabled={{ before: new Date() }}
                 classNames={{
-                  day_selected: "bg-violet-600 text-white rounded-full",
-                  nav_button: "text-violet-600 hover:bg-violet-100 rounded p-1",
+                  day_selected:
+                    "bg-[var(--accent-color)] text-white rounded-full",
+                  nav_button:
+                    "text-[var(--accent-color)] hover:bg-[var(--accent-btn-hover-color)] rounded p-1",
                   nav_button_next:
-                    "text-violet-600 hover:bg-violet-100 rounded p-1",
+                    "text-[var(--accent-color)] hover:bg-[var(--accent-btn-hover-color)]rounded p-1",
                   nav_button_previous:
-                    "text-violet-600 hover:bg-violet-100 rounded p-1",
+                    "text-[var(--accent-color)] hover:[var(--accent-btn-hover-color)] rounded p-1",
                 }}
                 className="rdp-weekdays-none"
               />
@@ -311,7 +313,7 @@ export default function AddProjectModal({
                     ? "text-[var(--primary-text)]"
                     : "text-[var(--light-text)]"
                 }
-                 focus:ring-none focus:ring-violet-500`}
+                 focus:ring-none focus:ring-[var(--accent-color)]`}
         >
           {priority || "Select priority"}
           <ChevronDown size={16} className="text-[var(--light-text)]" />
@@ -345,7 +347,7 @@ export default function AddProjectModal({
         </button>
         <button
           type="submit"
-          className="px-4 py-2 rounded-lg text-sm bg-violet-600 text-white hover:bg-violet-700 shadow cursor-pointer"
+          className="px-4 py-2 rounded-lg text-sm bg-[var(--accent-color)] text-white hover:bg-[var(--accent-btn-hover-color)] shadow cursor-pointer"
         >
           {project._id ? "Update Project" : "Add Project"}
         </button>

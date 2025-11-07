@@ -56,13 +56,13 @@ export default function TasksCreatedToday() {
     fetchTasks();
   }, []);
   return (
-    <div className="flex flex-col justify-between p-4 border border-[var(--border)] rounded-2xl min-h-[261px] w-full bg-[var(--cards-bg)]">
+    <div className="flex flex-col justify-between p-4 pt-2.5 pb-3 border border-[var(--border)] rounded-2xl min-h-[261px] w-full bg-[var(--cards-bg)]">
       {/* Header */}
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center mb-3 ">
         <p className="text-lg font-medium ">Recent Tasks</p>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="px-3 py-1 text-sm rounded-lg bg-violet-600 text-white hover:bg-violet-700 cursor-pointer"
+          className="px-3 py-1 text-sm rounded-lg bg-[var(--accent-color)] text-white hover:bg-[var(--accent-btn-hover-color)] cursor-pointer"
         >
           + Add Task
         </button>
@@ -73,7 +73,7 @@ export default function TasksCreatedToday() {
               {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute -top-2 -right-2 bg-violet-200 shadow-2xl rounded-full w-8.5 h-8.5 flex items-center justify-center text-violet-900 hover:bg-violet-300 cursor-pointer"
+                className="absolute -top-2 -right-2 bg-[var(--accent-color)] shadow-2xl rounded-full w-8.5 h-8.5 flex items-center justify-center text-white hover:bg-[var(--accent-btn-hover-color)] cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -82,7 +82,18 @@ export default function TasksCreatedToday() {
               <AddNewTask
                 onClose={() => setIsOpen(false)}
                 onTaskAdded={(newTask) => {
-                  setTasks((prev) => [...prev, newTask]);
+                  setTasks((prev) => {
+                    const updated = [newTask, ...prev];
+
+                    // Sort by dueDate (most recent first) and keep only 4
+                    return updated
+                      .sort(
+                        (a, b) =>
+                          new Date(b.dueDate || "").getTime() -
+                          new Date(a.dueDate || "").getTime()
+                      )
+                      .slice(0, 4);
+                  });
                 }}
               />
             </div>
@@ -150,7 +161,7 @@ export default function TasksCreatedToday() {
         <div className="flex justify-end mt-3">
           <Link
             to={"/tasks"}
-            className="text-sm text-[var(--violet-text)] hover:underline cursor-pointer"
+            className="text-sm text-[var(--accent-color)] hover:underline cursor-pointer"
           >
             See all tasks →
           </Link>

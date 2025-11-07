@@ -4,18 +4,21 @@ import BoardView from "./BoardView";
 import ListView from "./ListView";
 import AddNewTask from "./AddNewTask";
 import axios from "axios";
+import { handleError } from "../../utils/utils";
+import type { Task } from "../../types/task";
 
-type Task = {
-  _id: string;
-  title: string;
-  description?: string;
-  dueDate?: string;
-  priority?: string;
-  status: "to do" | "in progress" | "completed";
-};
 export default function ViewsCombined() {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+
+  const handleEditTask = async (taskId: string) => {
+    const task = tasks.find((t) => t._id === taskId);
+    if (task) {
+      setTaskToEdit(task);
+      setIsOpen(true);
+    }
+  };
 
   const params =
     typeof window !== "undefined"
@@ -71,10 +74,13 @@ export default function ViewsCombined() {
         }
       );
       console.log("Tasks fetched:", res.data);
-      const normalized = res.data.map((task: any) => ({
-        ...task,
-        status: mapStatus(task.status),
-      }));
+      const normalized = res.data
+        .map((task: any) => ({
+          ...task,
+          status: mapStatus(task.status),
+        }))
+        .filter((t: Task) => !t.isTrashed);
+
       setTasks(normalized);
     } catch (err) {
       console.error(err);
@@ -82,7 +88,27 @@ export default function ViewsCombined() {
       setLoading(false);
     }
   };
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const id = tasks.find((t) => t._id === taskId)?._id;
+      if (!id) return handleError("Task not found in local state");
+      console.log("🔑 Sending token from delete:", authUser.token);
 
+      const res = await axios.put(
+        `http://localhost:3000/tasks/${id}/trash`,
+        {}, // empty body
+        { headers: { Authorization: `Bearer ${authUser.token}` } }
+      );
+
+      console.log("Delete response:", res.data);
+
+      // Remove from local state
+      setTasks((prev) => prev.filter((t) => t._id !== taskId));
+    } catch (err: any) {
+      console.error("Delete error:", err.response || err);
+      handleError(err.message || "Failed to delete task");
+    }
+  };
   // ✅ Fetch on mount
   useEffect(() => {
     fetchTasks();
@@ -99,7 +125,7 @@ export default function ViewsCombined() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search task..."
-            className="border border-[var(--border-color)] pl-10 pr-3 py-2 rounded-xl w-full focus:ring-1 focus:ring-violet-400 outline-none text-sm "
+            className="border border-[var(--border-color)] pl-10 pr-3 py-2 rounded-xl w-full focus:ring-1 focus:ring-[var(--accent-color)] outline-none text-sm "
           />
         </div>
 
@@ -109,9 +135,9 @@ export default function ViewsCombined() {
           <div className="flex gap-2">
             <button
               onClick={() => handleViewChange("list")}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border border-[var(--border)] rounded-xl cursor-pointer ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border  rounded-xl cursor-pointer ${
                 viewMode === "list"
-                  ? "bg-[var(--inside-card-bg)] border-violet-400 text-[var(--violet-text)] "
+                  ? "bg-[var(--inside-card-bg)] border-[var(--accent-color)] text-[var(--accent-color)] "
                   : "border-[var(--border-color)] hover:bg-[var(--hover-bg)] "
               }`}
             >
@@ -123,8 +149,8 @@ export default function ViewsCombined() {
               onClick={() => handleViewChange("board")}
               className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border rounded-xl cursor-pointer ${
                 viewMode === "board"
-                  ? "bg-[var(--inside-card-bg)] border-violet-400 text-[var(--violet-text)] "
-                  : "border-gray-300 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
+                  ? "bg-[var(--inside-card-bg)] border-[var(--accent-color)] text-[var(--accent-color)] "
+                  : "border-[var(--border)] hover:bg-[var(--hover-bg)] "
               }`}
             >
               <LayoutGrid className="h-4 w-4" />
@@ -135,8 +161,19 @@ export default function ViewsCombined() {
           {/* Add Project */}
 
           <button
-            onClick={() => setIsOpen(true)}
-            className="bg-violet-500 hover:bg-violet-600 px-4 sm:px-5 py-2 flex items-center justify-center gap-1 rounded-full text-white text-sm shadow cursor-pointer"
+            onClick={() => {
+              setTaskToEdit(null);
+              setIsOpen(true);
+            }}
+            style={{ backgroundColor: "var(--accent-color)" }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                "var(--accent-btn-hover-color)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+            }
+            className=" px-4 sm:px-5 py-2 flex items-center justify-center gap-1 rounded-full text-white text-sm shadow cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">Add Task</span>
@@ -149,7 +186,7 @@ export default function ViewsCombined() {
                 {/* Close Button */}
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="absolute -top-2 -right-2 bg-violet-200 shadow-2xl rounded-full w-8.5 h-8.5 flex items-center justify-center text-violet-900 hover:bg-violet-300 cursor-pointer"
+                  className="absolute -top-2 -right-2 shadow-2xl rounded-full w-8.5 h-8.5 flex items-center justify-center  text-violet-900 hover:bg-[var(--accent-btn-hover-color)] bg-[var(--accent-color)]  cursor-pointer"
                 >
                   <X size={18} />
                 </button>
@@ -158,8 +195,14 @@ export default function ViewsCombined() {
                 <AddNewTask
                   onClose={() => setIsOpen(false)}
                   onTaskAdded={(newTask) => {
-                    setTasks((prev) => [...prev, newTask]);
+                    setTasks((prev) => {
+                      const exists = prev.some((t) => t._id === newTask._id);
+                      return exists
+                        ? prev.map((t) => (t._id === newTask._id ? newTask : t))
+                        : [...prev, newTask];
+                    });
                   }}
+                  initialTask={taskToEdit ?? undefined}
                 />
               </div>
             </div>
@@ -172,9 +215,19 @@ export default function ViewsCombined() {
             tasks={filteredTasks}
             loading={loading}
             setTasks={setTasks}
+            onTaskDeleted={handleDeleteTask}
+            onTaskEdited={handleEditTask}
+            parentModalOpen={isOpen}
           />
         ) : (
-          <ListView tasks={filteredTasks} loading={loading} />
+          <ListView
+            tasks={filteredTasks}
+            loading={loading}
+            setTasks={setTasks}
+            onTaskDeleted={handleDeleteTask}
+            onTaskEdited={handleEditTask}
+            parentModalOpen={isOpen}
+          />
         )}
       </main>
     </div>

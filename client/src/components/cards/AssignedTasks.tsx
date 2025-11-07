@@ -1,109 +1,158 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Eye, MoreHorizontal, MoveRight, MoveUpRight, X } from "lucide-react";
-import AllAssignedTask from "../assigned/AllAssignedTask";
-import Dropdown from "../assigned/Dropdown";
-import AddAssignedTask from "../assigned/AddAssignedTask";
+import { useEffect, useRef, useState } from "react";
+import { Plus, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import AddProjectModal from "../projects/AddProjectModal";
+
+type Project = {
+  _id: string;
+  title: string;
+  dueDate?: string;
+  isTrashed?: boolean;
+  userId?: string;
+};
 
 export default function AssignedTasks() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const collection = [
-    {
-      name: "Web Mockup",
-      detail: "Yellow branding",
-      duedate: "12 May",
-    },
-    {
-      name: "Mobile App",
-      detail: "UI Redesign",
-      duedate: "18 May",
-    },
-    {
-      name: "Landing Page",
-      detail: "SEO Optimized",
-      duedate: "25 May",
-    },
-  ];
-  const menuItems = [
-    { label: "Add Task", onClick: () => setIsAddOpen(true) },
-    { label: "View All", onClick: () => setIsAllOpen(true) },
-  ];
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [editProject, setEditProject] = useState<Project | null>(null);
+  const handleProjectAdded = (newProject: Project) => {
+    setProjects((prev) => {
+      let updatedProjects;
 
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAllOpen, setIsAllOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+      if (editProject) {
+        // Edit logic
+        updatedProjects = prev.map((p) =>
+          p._id === newProject._id ? newProject : p
+        );
+      } else {
+        // Add new project at top
+        updatedProjects = [newProject, ...prev];
+      }
+
+      // Sort and limit to 3 most recent by dueDate
+      return updatedProjects
+        .sort(
+          (a, b) =>
+            new Date(b.dueDate || "").getTime() -
+            new Date(a.dueDate || "").getTime()
+        )
+        .slice(0, 3);
+    });
+
+    setIsProjectModalOpen(false);
+    setEditProject(null);
+  };
+
+  // --- END: Data and State moved from children ---
+
+  const ProjectModal = () =>
+    isProjectModalOpen && (
+      <div className="fixed inset-0 bg-[var(--black-overlay)] flex items-center justify-center z-50">
+        <div className="relative bg-[var(--bg)] p-6 rounded-xl shadow-lg w-[90%] max-w-md">
+          <button
+            onClick={() => {
+              setIsProjectModalOpen(false);
+              setEditProject(null);
+            }}
+            className="absolute -top-2  cursor-pointer -right-2 bg-[var(--accent-color)] rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-[var(--accent-btn-hover-color)] transition"
+          >
+            <X size={18} />
+          </button>
+          <AddProjectModal
+            initialProject={editProject || undefined}
+            onClose={() => {
+              setIsProjectModalOpen(false);
+              setEditProject(null);
+            }}
+            onProjectAdded={handleProjectAdded}
+          />
+        </div>
+      </div>
+    );
+  const [projects, setProjects] = useState<Project[]>([]);
+  const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
+
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setIsDropdownOpen(false);
+    const fetchProjects = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/projects", {
+          headers: { Authorization: `Bearer ${authUser.token}` },
+        });
+
+        const filtered = res.data
+          .filter((p: Project) => !p.isTrashed)
+          .sort(
+            (a: Project, b: Project) =>
+              new Date(b.dueDate || "").getTime() -
+              new Date(a.dueDate || "").getTime()
+          )
+          .slice(0, 3); // only 3 most recent
+
+        setProjects(filtered);
+      } catch (error: any) {
+        toast.error(error.message || "Something went wrong");
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    fetchProjects();
   }, []);
+
   return (
-    <div className="flex flex-col border border-[var(--border)] bg-[var(--cards-bg)]  rounded-xl ">
+    <div className="flex flex-col border border-[var(--border)] bg-[var(--cards-bg)] rounded-xl overflow-hidden">
       {/* Header */}
-      <div className=" flex justify-between items-center border-[var(--border)]  px-4 py-3">
-        <p className="text-lg font-medium  ">Assigned Tasks</p>
-        <div className="relative" ref={dropdownRef}>
-          <button
-            className="flex justify-center items-center cursor-pointer   "
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+      <div className="flex justify-between items-center border-b border-[var(--border)]  px-4 py-1.5">
+        <p className="text-lg font-medium text-[var(--text-primary)]">
+          Projects
+        </p>
+        {}
+        <div>
+          <Link
+            to={"/projects"}
+            className="flex justify-center items-center p-1 rounded-md text-sm transition text-[var(--accent-color)] cursor-pointer hover:underline"
           >
-            <MoreHorizontal size={17} />
-          </button>
-          {isDropdownOpen && (
-            <div>
-              <Dropdown items={menuItems} />
-            </div>
-          )}
+            View More →
+          </Link>
         </div>
       </div>
 
-      {/* Task List */}
-      <div className=" p-2 pb-0 pt-0  ">
-        {collection.map((item, index) => (
+      {/* Project List */}
+      <div className="grid grid-cols-1 gap-2 p-3">
+        {/* Add Project Button */}
+        <button
+          className="border border-[var(--accent-color)] flex justify-center items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-[var(--accent-color)] hover:bg-[var(--inside-card-bg)] transition cursor-pointer"
+          onClick={() => setIsProjectModalOpen(true)}
+        >
+          <Plus size={16} />
+          Add Project
+        </button>
+        {projects.map((item, index) => (
           <div
             key={index}
-            className="flex justify-between items-center w-full px-4 py-1 mt-2 bg-[var(--inside-card-bg)]  border rounded border-[var(--border)]  transition"
+            className="border border-[var(--border)] flex items-center gap-4 px-3 py-1.5 rounded-lg text-sm hover:bg-[var(--hover-bg)]  transition"
           >
-            {/* Left side */}
-            <div className="flex flex-col">
-              <p className="text-base font-medium ">{item.name}</p>
-              <div className="flex gap-3 text-sm text-[var(--light-text)] ">
-                <p>{item.detail}</p>
-                <p className="text-[var(--violet-text)] font-medium">
-                  Due {item.duedate}
-                </p>
-              </div>
+            <div className="w-9 h-9 bg-[var(--accent-color)] rounded-full flex justify-center items-center font-semibold text-white">
+              {item.title.slice(0, 2).toLocaleUpperCase()}
             </div>
+            <div className="flex flex-col text-left">
+              <h1 className="font-medium text-[var(--text-primary)]">
+                {item.title}
+              </h1>
 
-            {/* Right side - Eye Icon */}
-            <button className="p-2 rounded-full hover:bg-[var(--hover-bg)]  transition cursor-pointer">
-              <Eye className="w-5 h-5 " />
-            </button>
+              <p className="text-xs text-[var(--light-text)]">
+                Due Date:{" "}
+                {item.dueDate
+                  ? new Date(item.dueDate).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "N/A"}
+              </p>
+            </div>
           </div>
         ))}
-        <button
-          className="flex items-center justify-end gap-1.5 w-full text-sm font-medium text-[var(--violet-text)] hover:underline transition-colors duration-200 p-2 cursor-pointer"
-          onClick={() => setIsAllOpen(true)}
-        >
-          <span>View All</span>
-          <MoveRight size={16} className="shrink-0" />
-        </button>
-        {isAllOpen && (
-          <AllAssignedTask
-            isOpen={isAllOpen}
-            onClose={() => setIsAllOpen(false)}
-          />
-        )}
       </div>
+      <ProjectModal />
     </div>
   );
 }

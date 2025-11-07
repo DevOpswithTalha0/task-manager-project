@@ -24,13 +24,14 @@ export const GetProjectsStats = async (req: Request, res: Response) => {
     );
 
     const [totalCount, completedCount, inProgressCount, toDoCount, dueTodayCount] = await Promise.all([
-      ProjectsModel.countDocuments({ userId }),
-      ProjectsModel.countDocuments({ userId, status: "Completed" }),      
-      ProjectsModel.countDocuments({ userId, status: "In Progress" }),     
+      ProjectsModel.countDocuments({ userId, isTrashed: false }),
+      ProjectsModel.countDocuments({ userId, status: "Completed", isTrashed: false }),      
+      ProjectsModel.countDocuments({ userId, status: "In Progress" , isTrashed: false }),     
       ProjectsModel.countDocuments({ userId, status: "To Do" }),          
       ProjectsModel.countDocuments({
         userId,
         dueDate: { $gte: startOfDay, $lt: endOfDay },
+        isTrashed: false,
       }),
     ]);
 
@@ -129,24 +130,24 @@ const GetOneProject = async (req: Request, res: Response) => {
   try {
     const projectWithTasks = await ProjectsModel.aggregate([
       {
-        $match: { _id: new mongoose.Types.ObjectId(req.params.id) } 
+        $match: { _id: new mongoose.Types.ObjectId(req.params.id) },
       },
       {
         $lookup: {
-          from: "tasks", 
+          from: "tasks",
           localField: "_id",
           foreignField: "projectId",
-          as: "tasks"
-        }
+          as: "tasks",
+        },
       },
       {
         $addFields: {
-         $totalTasks: { $size: "$tasks" }, 
-        }
+          totalTasks: { $size: "$tasks" }, // ✅ no `$` before field name
+        },
       },
       {
-        $project: { tasks: 0 } 
-      }
+        $project: { tasks: 0 }, // hides task array from response
+      },
     ]);
 
     if (!projectWithTasks || projectWithTasks.length === 0) {
@@ -155,9 +156,11 @@ const GetOneProject = async (req: Request, res: Response) => {
 
     res.status(200).json(projectWithTasks[0]);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching project:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 
 // Update project

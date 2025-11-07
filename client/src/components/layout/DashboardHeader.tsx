@@ -50,9 +50,9 @@ export default function DashboardHeader({
         {/* Hamburger (only visible on small screens) */}
         <button
           onClick={toggleSidebar}
-          className="sm:hidden p-2 rounded-lg hover:bg-violet-100 transition cursor-pointer"
+          className="sm:hidden p-2 rounded-lg hover:bg-[var(--hover-bg)] transition cursor-pointer"
         >
-          <Menu className="h-6 w-6 text-gray-700" />
+          <Menu className="h-6 w-6 " />
         </button>
 
         <div>
@@ -93,7 +93,7 @@ export default function DashboardHeader({
 
         <div className="hidden sm:block">
           <button
-            className="relative p-2 rounded-full transition cursor-pointer"
+            className="relative p-2 rounded-full transition cursor-pointer text-[var(--light-text)] hover:text-[var(--primary-text)]"
             style={{ backgroundColor: "transparent" }}
             onClick={() => {
               setTheme(isDark ? "light" : "dark");
@@ -108,7 +108,7 @@ export default function DashboardHeader({
         </div>
         <div className="relative" ref={dropdownRef}>
           <button
-            className="p-2 rounded-full flex items-center justify-center cursor-pointer transition"
+            className="p-2 rounded-full flex items-center justify-center cursor-pointer transition text-[var(--light-text)] hover:text-[var(--primary-text)]"
             style={{ backgroundColor: "var(--chip-bg)" }}
             onClick={() => setIsOpen(!isOpen)}
           >

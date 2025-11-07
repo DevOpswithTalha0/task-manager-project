@@ -121,7 +121,7 @@ export default function ListModeProjects({
   return (
     <div className="w-full">
       {currentProjects.length === 0 && totalPages === 1 ? (
-        <div className="text-center text-gray-600">
+        <div className="text-center text-[var(--light-text)]">
           <p className="text-lg font-medium">No projects yet</p>
           <p className="text-sm mt-2">
             Start by adding a new project to see it here.
@@ -152,7 +152,7 @@ export default function ListModeProjects({
                     <td className="py-2 px-4 font-medium text-left">
                       <button
                         onClick={() => setSelectedProjectId(project._id)}
-                        className="hover:underline cursor-pointer text-violet-600"
+                        className="hover:underline cursor-pointer text-[var(--accent-color)]"
                       >
                         {project.title}
                       </button>
@@ -181,7 +181,7 @@ export default function ListModeProjects({
                         >
                           <MoreHorizontal
                             size={18}
-                            className="text-gray-600 hover:text-gray-700"
+                            className="text-[var(--light-text)] hover:text-[var(--text-primary)] "
                           />
                         </button>
                         {/* Modal logic removed and moved to ProjectCards.tsx */}
@@ -193,7 +193,7 @@ export default function ListModeProjects({
             </table>
             {isDropdownOpen && dropdownPosition && (
               <div
-                className="fixed z-[999] bg-white shadow-lg rounded-md border border-gray-200"
+                className="fixed z-[999] bg-[var(--bg)] shadow-lg rounded-md border border-[var(--border)]"
                 style={{
                   top: dropdownPosition.top + 30, // Offset a bit from the button
                   left: dropdownPosition.left,
@@ -229,19 +229,19 @@ export default function ListModeProjects({
             {currentProjects.map((project) => (
               <div
                 key={project._id}
-                className="grid grid-cols-2 gap-4 border border-b-0 border-gray-200 p-4 bg-white shadow-sm"
+                className="grid grid-cols-2 gap-4 border border-b-0 border-[var(--border)] p-4 bg-[var(--bg)] shadow-sm"
               >
                 {/* Left col - Project Name */}
-                <div className="flex items-center border-r border-gray-200">
+                <div className="flex items-center border-r border-[var(--border)]">
                   <button
                     onClick={() => setSelectedProjectId(project._id)}
-                    className="font-medium text-violet-600 cursor-pointer hover:underline"
+                    className="font-medium text-[var(--accent-color)] cursor-pointer hover:underline"
                   >
                     {project.title}
                   </button>
                 </div>
                 {/* Right col - Other info */}
-                <div className="space-y-1 text-sm text-gray-600">
+                <div className="space-y-1 text-sm text-[var(--light-text)]">
                   <p>
                     <span className="font-semibold">Status: </span>
                     {project.status || "N/A"}
@@ -264,12 +264,12 @@ export default function ListModeProjects({
                     <button onClick={() => toggleSmDropdown(project._id)}>
                       <MoreHorizontal
                         size={18}
-                        className="text-gray-600 cursor-pointer mt-1"
+                        className="text-[var(--light-text)] cursor-pointer mt-1"
                       />
                     </button>
                     {isSmScreenDropdownOpen == project._id && (
                       <div
-                        className="absolute top-6 z-50 bg-white left-0 shadow-lg rounded-md border border-gray-200"
+                        className="absolute top-6 z-50 bg-[var(--bg)] left-0 shadow-lg rounded-md border border-[var(--border)]"
                         ref={smDropdownRef}
                       >
                         <ActionDropdown
@@ -304,11 +304,11 @@ export default function ListModeProjects({
       />
 
       {/* Pagination (now uses props) */}
-      <footer className="flex justify-between items-center mt-6 text-sm text-gray-600">
+      <footer className="flex justify-between items-center mt-6 text-sm text-[var(--light-text)]">
         <button
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1 border border-gray-300 cursor-pointer rounded-lg disabled:opacity-50"
+          className="px-3 py-1 border border-[var(--border)] cursor-pointer rounded-lg disabled:opacity-50"
         >
           Prev
         </button>
@@ -319,10 +319,10 @@ export default function ListModeProjects({
               <button
                 key={num}
                 onClick={() => setCurrentPage(num)}
-                className={`px-3 py-1 rounded-lg border border-gray-300 cursor-pointer ${
+                className={`px-3 py-1 rounded-lg border border-[var(--border)] cursor-pointer ${
                   num === currentPage
-                    ? "bg-violet-500 text-white border-violet-500"
-                    : "hover:bg-gray-100"
+                    ? "bg-[var(--accent-color)] text-white border-[var(--accent-color)]"
+                    : "hover:bg-[var(--hover-bg)]"
                 }`}
               >
                 {num}
@@ -334,7 +334,7 @@ export default function ListModeProjects({
         <button
           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 border border-gray-300 cursor-pointer rounded-lg disabled:opacity-50"
+          className="px-3 py-1 border border-[var(--border)] cursor-pointer rounded-lg disabled:opacity-50"
         >
           Next
         </button>

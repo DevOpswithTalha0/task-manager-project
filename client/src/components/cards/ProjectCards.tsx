@@ -5,6 +5,7 @@ import ListModeProjects from "./ListModeProjects";
 import AddProjectModal from "../projects/AddProjectModal";
 import axios from "axios";
 import { handleError } from "../../utils/utils";
+import AddNewTask from "../tasks/AddNewTask";
 
 // --- START: Shared Types ---
 type Project = {
@@ -31,6 +32,11 @@ export default function ProjectCards() {
 
   // --- START: Data and State moved from children ---
   const [projects, setProjects] = useState<Project[]>([]);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+  const [selectedProjectForTask, setSelectedProjectForTask] = useState<
+    string | null
+  >(null);
+
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [editProject, setEditProject] = useState<Project | null>(null);
@@ -124,6 +130,10 @@ export default function ProjectCards() {
     selectedProjectId,
     editProject,
     handleProjectAdded,
+    onOpenAddTask: (projectId: string) => {
+      setSelectedProjectForTask(projectId);
+      setIsAddTaskOpen(true);
+    },
   };
 
   // --- Shared Modal Wrapper (CLEANUP) ---
@@ -136,7 +146,7 @@ export default function ProjectCards() {
               setIsProjectModalOpen(false);
               setEditProject(null);
             }}
-            className="absolute -top-2  cursor-pointer -right-2 bg-violet-200 rounded-full w-8 h-8 flex items-center justify-center text-gray-700 hover:bg-gray-300"
+            className="absolute -top-2  cursor-pointer -right-2 bg-[var(--accent-color)] rounded-full w-8 h-8 flex items-center justify-center text-[var(--primary-text)] hover:bg-[var(--accent-btn-hover-color)] transition"
           >
             <X size={18} />
           </button>
@@ -162,7 +172,7 @@ export default function ProjectCards() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search project..."
-            className="border  border-[var(--border)] pl-10 pr-3 py-2 rounded-xl w-full focus:ring-1 focus:ring-violet-400 outline-none text-sm "
+            className="border  border-[var(--border)] pl-10 pr-3 py-2 rounded-xl w-full focus:ring-1 focus:ring-[var(--accent-color)] outline-none text-sm "
           />
         </div>
 
@@ -173,9 +183,9 @@ export default function ProjectCards() {
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode("list")}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border  border-[var(--border)] rounded-xl cursor-pointer ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border   rounded-xl cursor-pointer ${
                   viewMode === "list"
-                    ? "bg-[var(--inside-card-bg)] border-violet-400 text-[var(--violet-text)]"
+                    ? "bg-[var(--inside-card-bg)] border-[var(--accent-color)] text-[var(--accent-color)]"
                     : "border-[var(--border-color)] hover:bg-[var(--hover-bg)]"
                 }`}
               >
@@ -185,9 +195,9 @@ export default function ProjectCards() {
 
               <button
                 onClick={() => setViewMode("card")}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border border-[var(--border)] rounded-xl cursor-pointer ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm border  rounded-xl cursor-pointer ${
                   viewMode === "card"
-                    ? "bg-[var(--inside-card-bg)] border-violet-400 text-[var(--violet-text)]"
+                    ? "bg-[var(--inside-card-bg)] border-[var(--accent-color)] text-[var(--accent-color)]"
                     : "border-[var(--border)] hover:bg-[var(--hover-bg)]"
                 }`}
               >
@@ -200,7 +210,15 @@ export default function ProjectCards() {
 
             <button
               onClick={() => setIsProjectModalOpen(true)}
-              className="bg-violet-500 hover:bg-violet-600 px-4 sm:px-5 py-2 flex items-center justify-center gap-1 rounded-full text-white text-sm shadow cursor-pointer"
+              style={{ backgroundColor: "var(--accent-color)" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor =
+                  "var(--accent-btn-hover-color)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+              }
+              className=" px-4 sm:px-5 py-2 flex items-center justify-center gap-1 rounded-full text-white text-sm shadow cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Add Project</span>
@@ -217,6 +235,22 @@ export default function ProjectCards() {
 
       {/* Render the shared modal and ProjectDetails here to manage global state */}
       <ProjectModal />
+      {isAddTaskOpen && (
+        <div className="fixed inset-0 bg-[var(--black-overlay)] flex items-center justify-center z-50">
+          <div className="relative bg-[var(--bg)] p-6 rounded-xl shadow-lg w-[90%] max-w-md">
+            <button
+              onClick={() => setIsAddTaskOpen(false)}
+              className="absolute -top-2 -right-2 bg-[var(--accent-color)] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[var(--accent-btn-hover-color)]"
+            >
+              <X size={18} />
+            </button>
+            <AddNewTask
+              onClose={() => setIsAddTaskOpen(false)}
+              projectId={selectedProjectForTask}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

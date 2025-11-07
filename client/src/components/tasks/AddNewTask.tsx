@@ -5,24 +5,35 @@ import axios from "axios";
 import "react-day-picker/dist/style.css";
 import { handleError } from "../../utils/utils";
 import { getAuthUser } from "../../utils/auth";
+import { toast } from "react-toastify";
 type Task = {
+  _id: string;
   title: string;
   description: string;
   projectId: string;
   dueDate: number;
   priority: string;
   userId: string;
+  completedAt?: Date;
   status: string;
 };
+
 type Props = {
   onClose?: () => void;
   onTaskAdded?: (task: any) => void;
+  initialTask?: Partial<Task>;
+  projectId?: string | null;
 };
 type Project = {
   _id: string;
   title: string;
 };
-export default function AddNewTask({ onClose, onTaskAdded }: Props) {
+export default function AddNewTask({
+  onClose,
+  onTaskAdded,
+  initialTask = {},
+  projectId,
+}: Props) {
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -35,14 +46,26 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
   const [projectSelected, setProjectSelected] =
     useState<string>("Select Project");
   const [task, setTask] = useState<Task>({
-    title: "",
-    description: "",
-    dueDate: 12,
-    status: "to do",
-    priority: "low",
-    projectId: "",
-    userId: "",
+    _id: initialTask._id || "",
+    title: initialTask.title || "",
+    description: initialTask.description || "",
+    dueDate: initialTask.dueDate || 12,
+    status: initialTask.status || "to do",
+    priority: initialTask.priority || "low",
+    projectId: initialTask.projectId || "",
+
+    userId: initialTask.userId || "",
   });
+  useEffect(() => {
+    if (initialTask) {
+      if (initialTask.status) setStatus(initialTask.status);
+      if (initialTask.priority) setPriority(initialTask.priority);
+      if (initialTask.dueDate) setSelected(new Date(initialTask.dueDate));
+      if (initialTask.status === "completed") {
+        task.completedAt = new Date();
+      }
+    }
+  }, [initialTask]);
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -70,11 +93,15 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
     e.preventDefault();
 
     if (!status) {
-      alert("Please select a status.");
+      toast.error("Please select a status.");
       return;
     }
     if (!selected) {
-      alert("Please select a due date.");
+      toast.error("Please select a due date.");
+      return;
+    }
+    if (!projectSelected) {
+      toast.error("Please select a project.");
       return;
     }
     const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
@@ -88,7 +115,8 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
         priority: priority?.toLowerCase(),
         userId: authUser.id,
         dueDate: selected?.toISOString(),
-        projectId: task.projectId,
+        projectId: projectId || task.projectId,
+        completedAt: status?.toLowerCase() === "completed" ? new Date() : null,
       };
 
       if (!authUser || !authUser.token) {
@@ -96,16 +124,28 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
         return;
       }
       console.log("🔑 Sending token:", authUser.token);
-
-      const res = await axios.post("http://localhost:3000/tasks", payload, {
-        headers: { Authorization: `Bearer ${authUser.token}` },
-      });
+      let res;
+      //update task
+      if (task._id) {
+        res = await axios.put(
+          `http://localhost:3000/tasks/${task._id}`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${authUser.token}` },
+          }
+        );
+      } else {
+        res = await axios.post("http://localhost:3000/tasks", payload, {
+          headers: { Authorization: `Bearer ${authUser.token}` },
+        });
+      }
 
       console.log("✅ Task created:", res.data);
       if (onTaskAdded) onTaskAdded(res.data);
 
       // Reset form
       setTask({
+        _id: "",
         title: "",
         description: "",
         projectId: "",
@@ -235,7 +275,7 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
           id="description"
           placeholder="Enter task details..."
           className="w-full px-3 py-2 border border-[var(--border)] rounded-lg resize-none 
-                     focus:outline-none focus:ring-none focus:ring-violet-500"
+                     focus:outline-none focus:ring-none focus:ring-[var(--accent-color)]"
           rows={3}
         ></textarea>
       </div>
@@ -264,7 +304,7 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
                            ? "text-[var(--primary-text)] "
                            : "text-[var(--light-text)] "
                        }
-                        focus:ring-none focus:ring-violet-500`}
+                        focus:ring-none focus:ring-[var(--accent-color)]`}
           >
             {status || "Select status"}
             <ChevronDown size={16} className="text-[var(--light-text)]" />
@@ -301,14 +341,14 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
               closeAllDropdowns();
               setIsCalendarOpen((prev) => !prev);
             }}
-            className={`w-full flex items-center justify-between px-3 py-2 border  cursor-pointer
-                       border-[var(--border)] rounded-lg bg-[var(--inside-card-bg)] 
+            className={`w-full flex items-center justify-between px-3 py-2 border border-[var(--border)] cursor-pointer
+                        rounded-lg bg-[var(--inside-card-bg)] 
                        ${
                          selected
                            ? "text-[var(--primary-text)]"
                            : "text-[var(--light-text)]"
                        }
-                        focus:ring-none focus:ring-violet-500`}
+                        focus:ring-none focus:ring-[var(--accent-color)]`}
           >
             {selected ? formatDate(selected) : "Select a date"}
 
@@ -316,7 +356,7 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
           </button>
           {isCalendarOpen && (
             <div
-              className="absolute z-20 -top-15 bg-[var(--bg)] border border[var(--border)]
+              className="absolute z-20 -top-26 bg-[var(--bg)] border border[var(--border)]
                             rounded-xl shadow-lg p-3 min-w-[280px] overflow-hidden"
             >
               <DayPicker
@@ -363,7 +403,7 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
                     ? "text-[var(--primary-text)]"
                     : "text-[var(--light-text)]"
                 }
-                 focus:ring-none focus:ring-violet-500`}
+                 focus:ring-none focus:ring-[var(--accent-color)]`}
         >
           {priority || "Select priority"}
           <ChevronDown size={16} className="text-[var(--light-text)]" />
@@ -390,16 +430,16 @@ export default function AddNewTask({ onClose, onTaskAdded }: Props) {
       <div className="flex justify-end gap-3 mt-4">
         <button
           type="button"
-          className="px-4 py-2 rounded-lg text-sm border border-[var(--border)] hover:bg-gray-100 cursor-pointer"
+          className="px-4 py-2 rounded-lg text-sm border border-[var(--border)] hover:bg-[var(--hover-bg)] cursor-pointer"
           onClick={onClose}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 rounded-lg text-sm bg-violet-600 text-white hover:bg-violet-700 shadow cursor-pointer"
+          className="px-4 py-2 rounded-lg text-sm hover:bg-[var(--accent-btn-hover-color)] bg-[var(--accent-color)]   text-white  shadow cursor-pointer"
         >
-          Add Task
+          {task._id ? "Update Task" : "Add Task"}
         </button>
       </div>
     </form>

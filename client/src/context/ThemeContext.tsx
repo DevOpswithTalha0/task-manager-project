@@ -5,6 +5,8 @@ type ThemeContextValue = {
   theme: Theme;
   setTheme: (v: Theme) => void;
   isDark: boolean;
+  accentColor: string;
+  setAccentColor: (v: string) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -25,11 +27,39 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return saved ?? "system";
   });
 
+  const [accentColor, setAccentColor] = useState(() => {
+    return localStorage.getItem("accent-color") || "violet";
+  });
+
+  // Apply accent color as CSS variables
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--accent-color",
+      `var(--accent-${accentColor}-500)`
+    );
+    document.documentElement.style.setProperty(
+      "--accent-bg-color",
+      `var(--accent-${accentColor}-100)`
+    );
+    document.documentElement.style.setProperty(
+      "--accent-hover-color",
+      `var(--accent-${accentColor}-hover)`
+    );
+    document.documentElement.style.setProperty(
+      "--accent-highlight-color",
+      `var(--accent-${accentColor}-600)`
+    );
+    document.documentElement.style.setProperty(
+      "--accent-btn-hover-color",
+      `var(--accent-btn-${accentColor}-700)`
+    );
+    localStorage.setItem("accent-color", accentColor);
+  }, [accentColor]);
+
   // Keep class in sync with theme
   useEffect(() => {
     const isDark =
       theme === "dark" || (theme === "system" && getSystemPrefersDark());
-    console.log("[Theme] Applied theme:", theme, "Dark mode active:", isDark);
     applyClass(isDark);
     localStorage.setItem("theme-pref", theme);
   }, [theme]);
@@ -46,8 +76,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<ThemeContextValue>(() => {
     const isDark =
       theme === "dark" || (theme === "system" && getSystemPrefersDark());
-    return { theme, setTheme, isDark };
-  }, [theme]);
+    return { theme, setTheme, isDark, accentColor, setAccentColor };
+  }, [theme, accentColor]);
 
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

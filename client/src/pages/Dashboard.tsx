@@ -33,9 +33,9 @@ export default function Dashboard() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <AssignedTasks />
             <ProgressTrends />
             <WeeklyProjectsChart />
+            <AssignedTasks />
           </div>
 
           {/* Chart + Notepad Section */}

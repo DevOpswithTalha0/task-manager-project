@@ -10,6 +10,13 @@ type Project = {
   priority: string;
   description: string;
 };
+type Task = {
+  _id: string;
+  title: string;
+  description?: string;
+  dueDate?: string;
+  status?: string;
+};
 
 type ProjectDrawerProps = {
   projectId: string | null;
@@ -21,28 +28,80 @@ export default function ProjectDetails({
   onClose,
 }: ProjectDrawerProps) {
   const [project, setProject] = useState<Project | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [comments, setComments] = useState<{ id: string; text: string }[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"tasks" | "comments">("tasks");
 
   useEffect(() => {
     if (!projectId) return;
 
-    const fetchProject = async () => {
+    const fetchProjectAndTasks = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          `http://localhost:3000/projects/${projectId}`
+        const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
+
+        // fetch project
+        const projectRes = await axios.get(
+          `http://localhost:3000/projects/${projectId}`,
+          {
+            headers: { Authorization: `Bearer ${authUser.token}` },
+          }
         );
-        setProject(res.data);
+        setProject(projectRes.data);
+
+        // fetch tasks of this project
+        const tasksRes = await axios.get(
+          `http://localhost:3000/tasks/${projectId}`,
+          {
+            headers: { Authorization: `Bearer ${authUser.token}` },
+          }
+        );
+        setTasks(tasksRes.data);
       } catch (err) {
-        console.error("❌ Failed to fetch project:", err);
+        console.error("❌ Failed to fetch project or tasks:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProject();
+    fetchProjectAndTasks();
   }, [projectId]);
+  useEffect(() => {
+    if (projectId) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [projectId]);
+  useEffect(() => {
+    if (!projectId) return;
+
+    // load comments for this project
+    const storedComments = JSON.parse(
+      localStorage.getItem(`comments_${projectId}`) || "[]"
+    );
+    setComments(storedComments);
+  }, [projectId]);
+
+  useEffect(() => {
+    if (projectId) {
+      localStorage.setItem(`comments_${projectId}`, JSON.stringify(comments));
+    }
+  }, [comments, projectId]);
+  const addComment = (text: string) => {
+    const newComment = { id: Date.now().toString(), text };
+    setComments((prev) => [...prev, newComment]);
+  };
+
+  const deleteComment = (id: string) => {
+    setComments((prev) => prev.filter((comment) => comment.id !== id));
+  };
 
   return (
     <>
@@ -53,31 +112,25 @@ export default function ProjectDetails({
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-xl border-l border-gray-200 z-50
+        className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-[var(--bg)] shadow-xl border-l border-[var(--border)] z-50
   transform transition-transform duration-300 ease-in-out
   ${projectId ? "translate-x-0" : "translate-x-full"}`}
       >
-        <header className="flex justify-between border-b border-gray-200 p-4 pt-3 pb-3 ">
-          <button>
+        <header className="flex justify-between  p-4 pt-2 pb-2 relative">
+          <button className="absolute text-white top-1 right-1 rounded-full bg-[var(--accent-color)] p-1.5 ">
             <X
               size={17}
-              className="text-gray-500 cursor-pointer hover:text-gray-700"
+              className=" rounded-full  cursor-pointer  "
               onClick={onClose}
-            />
-          </button>
-          <button>
-            <MoreHorizontal
-              size={17}
-              className="text-gray-500 hover:text-gray-600 cursor-pointer"
             />
           </button>
         </header>
         <main className="flex flex-col p-4 gap-4 ">
-          <p className="text-left text-2xl font-medium text-black">
+          <p className="text-left text-xl text-[var(--primary-text)]">
             {loading ? "Loading..." : project?.title || "Project Details"}
           </p>
           <div className="flex gap-6">
-            <p className="font-medium text-gray-700">Due Date</p>
+            <p className="font-medium text-[var(--light-text)]">Due Date</p>
             <p>
               {project?.dueDate
                 ? new Date(project.dueDate).toLocaleDateString("en-US", {
@@ -89,9 +142,9 @@ export default function ProjectDetails({
             </p>
           </div>
           <div className="flex gap-10">
-            <span className="font-medium text-gray-700">Status</span>
+            <span className="font-medium text-[var(--light-text)]">Status</span>
             <span
-              className={`px-2 py-0.5 rounded-full text-xs ${
+              className={`px-2 py-0.5 rounded-full flex justify-center items-center text-xs ${
                 project?.status === "Completed"
                   ? "bg-green-100 text-green-700"
                   : project?.status === "In Progress"
@@ -103,23 +156,25 @@ export default function ProjectDetails({
             </span>
           </div>
           <div className="flex gap-10">
-            <p className="font-medium text-gray-600">Priority</p>
+            <p className="font-medium text-[var(--light-text)]">Priority</p>
             <p>{project?.priority || "N/A"}</p>
           </div>
         </main>
         <div className="flex flex-col p-4 pt-2 pb-2 gap-2">
-          <p className="font-medium text-left text-xl">Description:</p>
-          <p className="text-left text-gray-600">{project?.description}</p>
+          <p className=" text-left text-base ">Description:</p>
+          <p className="text-left text-[var(--light-text)]">
+            {project?.description}
+          </p>
         </div>
         <div>
           {/* tabs */}
-          <div className="flex gap-2 border-b border-gray-300 p-4 pb-0">
+          <div className="flex gap-2 border-b border-[var(--border)] p-4 pb-0">
             <button
               onClick={() => setActiveTab("tasks")}
               className={`px-4 py-2 font-medium cursor-pointer ${
                 activeTab === "tasks"
-                  ? "text-violet-600 border-b-2 border-violet-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-[var(--accent-color)] border-b-2 border-[var(--accent-color)]"
+                  : "text-[var(--light-text)] hover:text-[var(--primary-text)]"
               }`}
             >
               Tasks
@@ -128,25 +183,150 @@ export default function ProjectDetails({
               onClick={() => setActiveTab("comments")}
               className={`px-4 py-2 font-medium cursor-pointer ${
                 activeTab === "comments"
-                  ? "text-violet-600 border-b-2 border-violet-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-[var(--accent-color)] border-b-2 border-[var(--accent-color)]"
+                  : "text-[var(--light-text)] hover:text-[var(--primary-text)]"
               }`}
             >
               Comments
             </button>
           </div>
           {/* Tab Content */}
-          <div className="p-4 text-sm">
+          <div className="p-4 text-sm max-h-[300px] overflow-y-auto custom-scroll">
             {activeTab === "tasks" ? (
-              <p className="text-gray-600">
-                📋 Project tasks will appear here.
-              </p>
+              tasks.length > 0 ? (
+                <ul className="flex flex-col gap-3">
+                  {tasks.map((task) => (
+                    <li
+                      key={task._id}
+                      className="border border-[var(--border)] p-3 rounded-lg hover:bg-[var(--hover-bg)] transition"
+                    >
+                      <p className="font-medium">{task.title}</p>
+                      {task.description && (
+                        <p className="text-sm text-[var(--light-text)]">
+                          {task.description}
+                        </p>
+                      )}
+                      {task.dueDate && (
+                        <p className="text-xs text-[var(--light-text)] mt-1">
+                          Due: {new Date(task.dueDate).toLocaleDateString()}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[var(--light-text)] italic">No tasks yet.</p>
+              )
             ) : (
-              <p className="text-gray-600">💬 Comments will appear here.</p>
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Add a comment..."
+                    className="flex-1 border border-[var(--border)] p-2 rounded-md bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)]"
+                    onKeyDown={(e) => {
+                      if (
+                        e.key === "Enter" &&
+                        e.currentTarget.value.trim() !== ""
+                      ) {
+                        addComment(e.currentTarget.value.trim());
+                        e.currentTarget.value = "";
+                      }
+                    }}
+                  />
+                </div>
+
+                <ul className="flex flex-col gap-2">
+                  {comments.length > 0 ? (
+                    comments.map((comment) => (
+                      <li
+                        key={comment.id}
+                        className="flex justify-between items-center border border-[var(--border)] p-2 rounded-md"
+                      >
+                        <span>{comment.text}</span>
+                        <button
+                          className="text-[var(--accent-color)] hover:opacity-75 cursor-pointer text-sm"
+                          onClick={() => deleteComment(comment.id)}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <p className="text-[var(--light-text)] italic">
+                      No comments yet.
+                    </p>
+                  )}
+                </ul>
+              </div>
             )}
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function CommentsTab({ projectId }: { projectId: string | null }) {
+  const [comments, setComments] = useState<string[]>([]);
+  const [newComment, setNewComment] = useState("");
+
+  // load comments for this project
+  useEffect(() => {
+    if (!projectId) return;
+    const saved = JSON.parse(localStorage.getItem("projectComments") || "{}");
+    setComments(saved[projectId] || []);
+  }, [projectId]);
+
+  // handle adding comment
+  const handleAddComment = () => {
+    if (!newComment.trim() || !projectId) return;
+
+    const saved = JSON.parse(localStorage.getItem("projectComments") || "{}");
+    const updated = {
+      ...saved,
+      [projectId]: [...(saved[projectId] || []), newComment.trim()],
+    };
+
+    localStorage.setItem("projectComments", JSON.stringify(updated));
+    setComments(updated[projectId]);
+    setNewComment("");
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-2 max-h-[200px] overflow-y-auto custom-scroll">
+        {comments.length > 0 ? (
+          comments.map((c, i) => (
+            <li
+              key={i}
+              className="bg-[var(--hover-bg)] border border-[var(--border)] rounded-lg p-2"
+            >
+              {c}
+            </li>
+          ))
+        ) : (
+          <p className="text-[var(--light-text)] italic">
+            No comments yet. Add one below!
+          </p>
+        )}
+      </ul>
+
+      <div className="flex gap-2 mt-2">
+        <input
+          type="text"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Add a comment..."
+          className="flex-1 border border-[var(--border)] rounded-lg px-3 py-2 bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)]"
+        />
+        <button
+          onClick={handleAddComment}
+          className="bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:opacity-90 cursor-pointer transition"
+        >
+          Add
+        </button>
+      </div>
+    </div>
   );
 }

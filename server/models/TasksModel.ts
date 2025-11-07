@@ -11,6 +11,7 @@ const TasksSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    completedAt: { type: Date },
      projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",

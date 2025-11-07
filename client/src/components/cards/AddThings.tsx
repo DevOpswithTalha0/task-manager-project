@@ -44,13 +44,13 @@ export default function AddThings() {
     {
       name: "Create Task",
       detail: "Add tasks to your projects",
-      icon: <ClipboardList className="h-6 w-6 text-violet-500" />,
+      icon: <ClipboardList className="h-6 w-6 text-[var(--accent-color)]" />,
       path: "/tasks",
     },
     {
       name: "Add Project",
       detail: "Start a new project",
-      icon: <PlusSquare className="h-6 w-6 text-violet-500" />,
+      icon: <PlusSquare className="h-6 w-6 text-[var(--accent-color)]" />,
       path: "/projects",
     },
   ];
@@ -77,7 +77,7 @@ export default function AddThings() {
           key={index}
           className="p-2 flex items-center gap-4 border border-[var(--border)] rounded-xl bg-[var(--cards-bg)] cursor-pointer"
         >
-          <div className="p-2 rounded-full bg-violet-100 flex items-center justify-center">
+          <div className="p-2 rounded-full bg-[var(--inside-card-bg)] flex items-center justify-center">
             {item.icon}
           </div>
           <div className="flex flex-col">
@@ -93,7 +93,7 @@ export default function AddThings() {
           key={index}
           className="p-2 flex items-center gap-4 border border-[var(--border)] rounded-xl bg-[var(--cards-bg)]"
         >
-          <div className="p-2.5 rounded-full bg-violet-100 flex items-center justify-center">
+          <div className="p-2.5 rounded-full bg-[var(--inside-card-bg)] flex items-center justify-center">
             {stat.icon}
           </div>
           <div className="flex flex-col">

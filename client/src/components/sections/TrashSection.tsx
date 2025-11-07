@@ -232,7 +232,7 @@ export default function TrashSection() {
             placeholder={`Search ${activeTab}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border   font-medium  border-[var(--border)] pl-10 pr-3 py-2 rounded-xl w-full  focus:border-violet-500 outline-none text-sm"
+            className="border   font-medium  border-[var(--border)] pl-10 pr-3 py-2 rounded-xl w-full  focus:border-[var(--accent-color)] outline-none text-sm"
           />
         </div>
 
@@ -240,7 +240,7 @@ export default function TrashSection() {
         <div className="flex flex-wrap justify-center sm:justify-end items-center gap-2">
           <button
             onClick={emptyTrash}
-            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl border border-red-500 text-red-600 hover:bg-red-50 transition"
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded-xl border border-red-500 cursor-pointer text-red-600 hover:bg-red-500  hover:text-white transition"
           >
             <Trash2 size={16} />
             Empty Trash
@@ -249,9 +249,9 @@ export default function TrashSection() {
           <button
             disabled={selectedItems.length === 0}
             onClick={handleBulkDelete}
-            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition cursor-pointer ${
               selectedItems.length > 0
-                ? "border-red-500 text-red-600 hover:bg-red-50"
+                ? "border-red-500 text-red-600 hover:bg-red-500 hover:text-white"
                 : "border-[var(--border)] text-[var(--light-text)] cursor-not-allowed"
             }`}
           >
@@ -262,9 +262,9 @@ export default function TrashSection() {
           <button
             disabled={selectedItems.length === 0}
             onClick={handleBulkRestore}
-            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm rounded-xl border transition cursor-pointer ${
               selectedItems.length > 0
-                ? "border-green-500 text-green-600 hover:bg-green-50"
+                ? "border-[var(--accent-color)] text-[var(--accent-color)] hover:bg-[var(--accent-btn-hover-color)] hover:text-white "
                 : "border-[var(--border)] text-[var(--light-text)] cursor-not-allowed"
             }`}
           >
@@ -287,7 +287,7 @@ export default function TrashSection() {
               }}
               className={`pb-2 font-medium cursor-pointer ${
                 activeTab === tab
-                  ? "text-violet-600 border-b-2 border-violet-600"
+                  ? "text-[var(--accent-color)] border-b-2 border-[var(--accent-color)]"
                   : "text-[var(--light-text)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -319,7 +319,7 @@ export default function TrashSection() {
                   <input
                     ref={selectAllRef}
                     type="checkbox"
-                    className="accent-violet-600 cursor-pointer"
+                    className="accent-[var(--accent-color)] cursor-pointer"
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     checked={
                       selectedItems.length === currentData.length &&
@@ -346,7 +346,7 @@ export default function TrashSection() {
                   <td className="p-3 pt-2 pb-2 ">
                     <input
                       type="checkbox"
-                      className="accent-violet-600 cursor-pointer"
+                      className="accent-[var(--accent-color)] cursor-pointer"
                       checked={selectedItems.includes(item._id)}
                       onChange={() => handleSelectOne(item._id)}
                     />
@@ -378,7 +378,7 @@ export default function TrashSection() {
                     <button
                       title="Restore"
                       onClick={() => restoreItems([item._id], activeTab)}
-                      className="p-1.5 rounded-md hover:bg-green-50 text-green-600"
+                      className="p-1.5 rounded-md hover:bg-[var(--accent-btn-hover-color)] text-[var(--accent-color)]"
                     >
                       <RotateCcw size={18} />
                     </button>
@@ -407,13 +407,13 @@ export default function TrashSection() {
           </p>
           <button
             onClick={handleBulkRestore}
-            className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="px-3 py-1.5 text-sm bg-[var(--accent-color)] text-white rounded-lg hover:bg-[var(--accent-btn-hover-color)] hover:text-white cursor-pointer"
           >
             Restore Selected
           </button>
           <button
             onClick={handleBulkDelete}
-            className="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700"
+            className="px-3 py-1.5 text-sm cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700"
           >
             Delete Selected
           </button>

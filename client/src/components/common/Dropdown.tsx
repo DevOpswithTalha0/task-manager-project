@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { User, Settings, LogOut, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 type DropdownProps = {
-  name?: string;
-  email?: string;
-  avatarLetter?: string;
   onLogout?: () => void;
 };
 
-export default function Dropdown({
-  name = "John Doe",
-  email = "example@gmail.com",
-  avatarLetter = "J",
-  onLogout,
-}: DropdownProps) {
+export default function Dropdown({ onLogout }: DropdownProps) {
+  const [data, setData] = React.useState<string>("User");
+  const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
+  useEffect(() => {
+    const fetchName = async () => {
+      const nameParts = await axios.get(
+        "http://localhost:3000/projects/stats",
+        {
+          headers: { Authorization: `Bearer ${authUser.token}` },
+        }
+      );
+      setData(nameParts.data.name || "User");
+    };
+    const avatarLetter = data.charAt(0).toUpperCase();
+    const name = data;
+    const email = authUser.email || "";
+    fetchName();
+  }, []);
   const navigate = useNavigate();
   const { logout } = useAuth();
   const items = [
@@ -45,12 +55,14 @@ export default function Dropdown({
     <div className="w-64 z-[60] bg-[var(--bg)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden">
       {/* Header */}
       <header className="flex items-center gap-3 p-4 border-b border-[var(--border)]">
-        <span className="bg-violet-600 w-10 h-10 rounded-full flex items-center justify-center text-[var(--primary-text)] font-medium">
-          {avatarLetter}
+        <span className="bg-[var(--accent-color)] w-10 h-10 rounded-full flex items-center justify-center text-white font-medium">
+          {authUser.name ? authUser.name.charAt(0).toUpperCase() : "U"}
         </span>
         <div className="flex flex-col">
-          <p className="font-medium ">{name}</p>
-          <p className="text-[var(--light-text)] text-sm truncate">{email}</p>
+          <p className="font-medium ">{authUser.name}</p>
+          <p className="text-[var(--light-text)] text-sm truncate">
+            {authUser.email}
+          </p>
         </div>
       </header>
 

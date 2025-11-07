@@ -4,6 +4,80 @@ import TasksModel from "../models/TasksModel";
 import ProjectsModel from "../models/ProjectsModel";
 import { createNotification } from "./NotificationsController";
 console.log("✅ TasksRoutes loaded");
+export const GetMonthlySummary = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const summary = await TasksModel.aggregate([
+      // 1️⃣ Filter: only completed tasks of this user
+      {
+        $match: {
+          userId,
+          status: "completed",
+          isTrashed: false,
+           completedAt: { $ne: null },
+        },
+      },
+      // 2️⃣ Group by month and year
+      {
+        $group: {
+  _id: {
+    year: { $year: "$completedAt" },
+    month: { $month: "$completedAt" },
+  },
+  completed: { $sum: 1 },
+},
+
+      },
+      // 3️⃣ Sort chronologically
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+      // 4️⃣ Format the response
+      {
+        $project: {
+          _id: 0,
+          month: {
+            $concat: [
+              {
+                $arrayElemAt: [
+                  [
+                    "", // months start at 1
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                  ],
+                  "$_id.month",
+                ],
+              },
+              " ",
+              { $toString: "$_id.year" },
+            ],
+          },
+          completed: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json(summary);
+  } catch (error: any) {
+    console.error("❌ Error fetching monthly summary:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
 
 export const GetTaskStats = async (req: Request, res: Response) => {
   try {
@@ -24,17 +98,17 @@ export const GetTaskStats = async (req: Request, res: Response) => {
       now.getDate() + 1
     );
 
-    const [totalCount, completedCount, inProgressCount, toDoCount, dueTodayCount] = await Promise.all([
-      TasksModel.countDocuments({ userId }),
-      TasksModel.countDocuments({ userId, status: "completed" }),       // ✅ lowercase
-      TasksModel.countDocuments({ userId, status: "in progress" }),     // ✅ space and lowercase
-      TasksModel.countDocuments({ userId, status: "to do" }),           // ✅ renamed from 'pending'
+     const [totalCount, completedCount, inProgressCount, toDoCount, dueTodayCount] = await Promise.all([
+      TasksModel.countDocuments({ userId, isTrashed: false }),
+      TasksModel.countDocuments({ userId, status: "completed", isTrashed: false }),
+      TasksModel.countDocuments({ userId, status: "in progress", isTrashed: false }),
+      TasksModel.countDocuments({ userId, status: "to do", isTrashed: false }),
       TasksModel.countDocuments({
         userId,
+        isTrashed: false,
         dueDate: { $gte: startOfDay, $lt: endOfDay },
       }),
     ]);
-
     res.status(200).json({
       totalCount,
       completedCount,
@@ -63,6 +137,9 @@ const CreateTask = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id; // from verifyToken
     const { title, description, status, priority, dueDate, projectId } = req.body;
+    if (req.body.status?.toLowerCase() === "completed") {
+  req.body.completedAt = new Date();
+}
 
     // ensure project exists & belongs to same user
     const project = await ProjectsModel.findOne({ _id: projectId, userId });
@@ -110,6 +187,15 @@ const GetOneTask = async (req: Request, res: Response) => {
 
 const UpdateTask = async (req: Request, res: Response) => {
   try {
+    const { status } = req.body;
+
+// Example inside UpdateTask
+if (req.body.status && req.body.status.toLowerCase() === "completed") {
+  req.body.completedAt = new Date();
+} else if (req.body.status && req.body.status.toLowerCase() !== "completed") {
+  req.body.completedAt = null; // optional: clear date if task marked incomplete
+}
+
     const task = await TasksModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
@@ -190,27 +276,37 @@ const GetTrashedTasks = async (req: Request, res: Response) => {
 };
 
 // Move task to trash
-const MoveTaskToTrash = async (req: Request, res: Response) => {
+export const MoveTaskToTrash = async (req:Request, res:Response) => {
+  const userId = (req as any).user.id;
   try {
+    console.log("🔥 Task ID:", req.params.id);
+    console.log("🧠 User:", userId);
+    console.log("🟢 MoveTaskToTrash route reached");
+
+
     const task = await TasksModel.findByIdAndUpdate(
       req.params.id,
-      { 
-        isTrashed: true, 
+      {
+        isTrashed: true,
         deletedOn: new Date(),
-        originalStatus: req.body.originalStatus || "to do"
+        originalStatus: req.body.status || "to do",
       },
       { new: true }
     );
-    
+
     if (!task) {
+      console.log("⚠️ Task not found in DB");
       return res.status(404).json({ message: "Task not found" });
     }
 
+    console.log("✅ Task moved to trash:", task);
     res.status(200).json(task);
-  } catch (error: any) {
+  } catch (error:any) {
+    console.error("❌ MoveTaskToTrash error:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Restore task from trash
 const RestoreTask = async (req: Request, res: Response) => {
@@ -250,6 +346,12 @@ const PermanentlyDeleteTask = async (req: Request, res: Response) => {
 };
 const UpdateAllTasks = async (req:Request, res: Response)=>{
   try {
+    if (req.body.status && req.body.status.toLowerCase() === "completed") {
+    req.body.completedAt = new Date();
+} else {
+    req.body.completedAt = null;
+}
+
     const updatedTask = await TasksModel.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
@@ -288,5 +390,6 @@ export default {
   GetTrashedTasks,
   MoveTaskToTrash,
   RestoreTask,
-  PermanentlyDeleteTask
+  PermanentlyDeleteTask,
+  GetMonthlySummary
 };

@@ -50,17 +50,17 @@ const getNotificationColor = (type: Notification["type"]) => {
   switch (type) {
     case "project_created":
     case "task_created":
-      return "bg-green-50 border-green-200";
+      return "bg-[var(--cards-bg)] border-[var(--border)]";
     case "project_updated":
     case "task_updated":
-      return "bg-blue-50 border-blue-200";
+      return "bg-[var(--cards-bg)] border-[var(--border)]";
     case "project_deleted":
     case "task_deleted":
-      return "bg-red-50 border-red-200";
+      return "bg-[var(--cards-bg)] border-[var(--border)]";
     case "task_due_soon":
-      return "bg-orange-50 border-orange-200";
+      return "bg-[var(--cards-bg)] border-[var(--border)]";
     default:
-      return "bg-gray-50 border-gray-200";
+      return "bg-[var(--cards-bg)] border-[var(--border)]";
   }
 };
 
@@ -219,9 +219,9 @@ export default function NotificationsDropdown({
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-[var(--violet-text)]  border-b border-[var(--border)] ">
+      <div className="flex items-center justify-between px-4 py-3 bg-[var(--accent-color)]  border-b border-[var(--border)] ">
         <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-violet-600 " />
+          <Bell className="h-5 w-5 text-white " />
           <p className="font-semibold text-lg text-[var(--primary-text)] ">
             Notifications
           </p>
@@ -235,7 +235,7 @@ export default function NotificationsDropdown({
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="p-1.5 rounded-md hover:bg-[var(--hover-bg)]  text-[var(--light-text)]  transition"
+              className="p-1.5 rounded-md hover:bg-[var(--accent-btn-hover-color)]  cursor-pointer hover:text-white transition"
               title="Mark all as read"
             >
               <CheckCircle2 size={16} />
@@ -261,7 +261,7 @@ export default function NotificationsDropdown({
               key={notification._id}
               className={`p-3 rounded-md border cursor-pointer transition ${
                 notification.isRead
-                  ? "bg-[var(--cards-bg)]  hover:bg-[var(--hover-bg)]dark:hover:bg-gray-700"
+                  ? "bg-[var(--cards-bg)]  hover:bg-[var(--hover-bg)] "
                   : "bg-[var(--bg)]  hover:bg-[var(--hover-bg)] "
               } ${getNotificationColor(notification.type)}`}
             >
@@ -276,12 +276,12 @@ export default function NotificationsDropdown({
                         className={`text-sm font-medium ${
                           notification.isRead
                             ? "text-[var(--light-text)] "
-                            : "text-[var(--primary-text)] "
+                            : "text-[var(--text-primary)] "
                         }`}
                       >
                         {notification.title}
                       </p>
-                      <p className="text-xs text-[var(--light-text)]  mt-1">
+                      <p className="text-xs text-[var(--text-primary)]  mt-1">
                         {notification.message}
                       </p>
                       <p className="text-xs text-[var(--light-text)] mt-1">
@@ -292,7 +292,7 @@ export default function NotificationsDropdown({
                       {!notification.isRead && (
                         <button
                           onClick={() => markAsRead(notification._id)}
-                          className="p-1 rounded hover:bg-[var(--hover-bg)]  transition"
+                          className="p-1 rounded hover:bg-[var(--hover-bg)]  transition cursor-pointer"
                           title="Mark as read"
                         >
                           <Check
@@ -303,7 +303,7 @@ export default function NotificationsDropdown({
                       )}
                       <button
                         onClick={() => deleteNotification(notification._id)}
-                        className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition"
+                        className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 size={14} className="text-red-500" />
@@ -325,7 +325,7 @@ export default function NotificationsDropdown({
           </p>
           <button
             onClick={fetchNotifications}
-            className="text-xs text-violet-600 dark:text-violet-400 hover:underline font-medium"
+            className="text-xs text-[var(--accent-color)]  hover:underline font-medium"
           >
             Refresh
           </button>

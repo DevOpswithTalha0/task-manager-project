@@ -235,7 +235,10 @@ export default function Profile() {
             className="w-24 h-24 rounded-full border-4 border-[var(--border)] shadow-md object-cover"
           />
         ) : (
-          <span className="w-24 h-24 bg-violet-500 border-4 border-[var(--border)] rounded-full shadow-md flex items-center justify-center text-white text-xl font-semibold">
+          <span
+            className="w-24 h-24  border-4 border-[var(--border)] rounded-full shadow-md flex items-center justify-center text-white text-xl font-semibold"
+            style={{ backgroundColor: "var(--accent-color)" }}
+          >
             {formData.firstName
               ? formData.firstName[0].toUpperCase() +
                 (formData.lastName ? formData.lastName[0].toUpperCase() : "")
@@ -246,7 +249,15 @@ export default function Profile() {
         <div className="flex flex-col gap-2">
           <label
             htmlFor="profilePic"
-            className="bg-violet-500 hover:bg-violet-600 px-3 py-1.5 rounded text-white text-sm transition cursor-pointer text-center"
+            style={{ backgroundColor: "var(--accent-color)" }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor =
+                "var(--accent-btn-hover-color)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+            }
+            className=" px-3 py-1.5 rounded text-white text-sm transition cursor-pointer text-center"
           >
             Change Picture
             <input
@@ -312,12 +323,12 @@ export default function Profile() {
               value={formData.password}
               onChange={handleChange}
               placeholder="•••••••"
-              className="border border-[var(--border)] rounded-lg px-3 py-2 w-full focus:outline-none focus:border-violet-500 pr-10"
+              className="border border-[var(--border)] rounded-lg px-3 py-2 w-full focus:outline-none focus:border-[var(--accent-color)] pr-10"
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute inset-y-0 right-3 flex items-center text-[var(--light-text)] cursor-pointer hover:text-violet-500"
+              className="absolute inset-y-0 right-3 flex items-center text-[var(--light-text)] cursor-pointer hover:text-[var(--accent-color)]"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -352,7 +363,7 @@ export default function Profile() {
           onChange={handleChange}
           rows={4}
           placeholder="Write something about yourself..."
-          className="border border-[var(--border)] rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-violet-500"
+          className="border border-[var(--border)] rounded-lg px-3 py-2 resize-none focus:outline-none focus:border-[var(--accent-color)] "
         ></textarea>
       </div>
 
@@ -369,8 +380,16 @@ export default function Profile() {
         <button
           type="button"
           onClick={handleSave}
+          style={{ backgroundColor: "var(--accent-color)" }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor =
+              "var(--accent-btn-hover-color)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+          }
           disabled={isSaving || isLoading}
-          className="w-full sm:w-auto bg-violet-500 hover:bg-violet-600 text-white px-6 py-2 rounded-lg cursor-pointer font-medium transition"
+          className="w-full sm:w-auto  text-white px-6 py-2 rounded-lg cursor-pointer font-medium transition"
         >
           {isSaving ? "Saving..." : "Save Changes"}
         </button>

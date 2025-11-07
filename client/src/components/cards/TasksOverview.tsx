@@ -7,6 +7,7 @@ type TaskStats = {
   inProgressCount: number;
   pendingCount: number;
   dueTodayCount: number;
+  isTrashed: boolean;
 };
 export default function TasksOverview() {
   const [stats, setStats] = useState<TaskStats | null>(null);
@@ -22,8 +23,12 @@ export default function TasksOverview() {
             Authorization: `Bearer ${authUser.token}`,
           },
         });
+        const data = res.data;
 
-        setStats(res.data);
+        // Only set stats if not trashed
+        if (!data.isTrashed) {
+          setStats(data);
+        }
       } catch (error) {
         console.error("Failed to fetch task stats", error);
       } finally {

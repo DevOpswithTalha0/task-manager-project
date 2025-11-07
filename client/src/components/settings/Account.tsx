@@ -352,7 +352,15 @@ export default function Account() {
         </button>
         <button
           type="button"
-          className="w-full sm:w-auto bg-violet-500 hover:bg-violet-600 text-white px-6 py-2.5 rounded-lg cursor-pointer font-medium transition disabled:opacity-50 disabled:bg-violet-400"
+          className="w-full sm:w-auto  text-white px-6 py-2.5 rounded-lg cursor-pointer font-medium transition disabled:opacity-50 disabled:bg-violet-400"
+          style={{ backgroundColor: "var(--accent-color)" }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor =
+              "var(--accent-btn-hover-color)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+          }
           onClick={handleSave}
           disabled={loading || !hasChanges}
         >

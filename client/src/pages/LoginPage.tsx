@@ -1,9 +1,9 @@
 import React, { useState, type ChangeEvent } from "react";
 import { useAuth } from "../context/AuthContext";
-import Image from "../assets/logo.jpg";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
+import Logo from "../assets/newLogo.jpg";
 type LoginInfo = {
   email: string;
   password: string;
@@ -56,33 +56,22 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2">
+    <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2 p-2 md:p-0">
       {/* Left Section - Form */}
-      <div className="flex items-center justify-center px-6 py-10 sm:px-10 lg:px-16">
+      <div className="flex items-center justify-center px-6 py-29 sm:px-10 lg:px-16">
         <div className="w-full max-w-md rounded-2xl">
           {/* Logo + Title */}
-          <div className="flex items-center mb-6">
-            <h1 className="text-2xl font-bold text-violet-600">Planora</h1>
+          <div className="flex items-center mb-6 gap-3">
+            <img src={Logo} alt="PlanOra Logo" className="w-12 h-12" />
+            <h1 className="text-3xl font-semibold text-violet-900">PlanOra</h1>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-2">
-            Get Started Now
+          <h2 className="text-2xl sm:text-2xl font-light text-[var(--primary-text)] mb-2">
+            Welcome Back
           </h2>
           <p className="text-gray-500 mb-5 text-sm sm:text-base">
-            Enter your details to create your account
+            Enter your details to login to your account
           </p>
-
-          {/* Social Buttons */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <button className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-100 cursor-pointer text-sm sm:text-base">
-              Sign up with Google
-            </button>
-            <button className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-100 cursor-pointer text-sm sm:text-base">
-              Sign up with Facebook
-            </button>
-          </div>
-
-          <div className="text-center text-gray-400 text-sm mb-3">or</div>
 
           {/* Form */}
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -116,21 +105,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Checkbox */}
-            <div className="flex items-center text-sm text-gray-600">
-              <input
-                type="checkbox"
-                id="terms"
-                className="mr-2 accent-violet-500 cursor-pointer"
-              />
-              <label htmlFor="terms">
-                I agree to the{" "}
-                <a href="#" className="text-violet-500 hover:underline">
-                  Terms & Conditions
-                </a>
-              </label>
-            </div>
-
             {/* Submit */}
             <button className="w-full py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition cursor-pointer text-sm sm:text-base">
               Login
@@ -151,7 +125,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Section - Hero */}
-      <div className="hidden md:flex flex-col items-center justify-center bg-violet-500 rounded-3xl m-5 text-white p-10">
+      <div className="hidden md:flex flex-col items-center justify-center bg-violet-500 rounded-3xl m-5 text-white p-10 ">
         <h1 className="text-3xl lg:text-4xl font-medium mb-4 text-center">
           Manage Your Work Smarter
         </h1>

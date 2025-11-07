@@ -94,7 +94,7 @@ export default function Notifications() {
             }
             className={`relative w-12 h-6 rounded-full cursor-pointer transition-colors ${
               settings[key as keyof typeof settings]
-                ? "bg-violet-500"
+                ? "bg-[var(--accent-color)]"
                 : "bg-[var(--light-text)]"
             }`}
           >
@@ -119,7 +119,15 @@ export default function Notifications() {
         </button>
         <button
           onClick={handleSave}
-          className="w-full sm:w-auto bg-violet-500 hover:bg-violet-600 text-white px-6 py-2 rounded-lg font-medium cursor-pointer"
+          style={{ backgroundColor: "var(--accent-color)" }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor =
+              "var(--accent-btn-hover-color)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "var(--accent-color)")
+          }
+          className="w-full sm:w-auto text-white px-6 py-2 rounded-lg font-medium cursor-pointer"
         >
           Save Changes
         </button>

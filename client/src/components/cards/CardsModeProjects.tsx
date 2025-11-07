@@ -31,6 +31,7 @@ type CardsModeProps = {
   selectedProjectId: string | null;
   editProject: Project | null;
   handleProjectAdded: (newProject: Project) => void;
+  onOpenAddTask: (projectId: string) => void;
 };
 // --- END: Props Definition ---
 
@@ -44,6 +45,7 @@ export default function CardsModeProjects({
   setEditProject,
   setIsProjectModalOpen,
   selectedProjectId,
+  onOpenAddTask,
 }: CardsModeProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -132,7 +134,7 @@ export default function CardsModeProjects({
                           }}
                           onEditProject={() => handleEdit(item)}
                           onAddTask={() => {
-                            console.log("TODO: open Add Task modal");
+                            onOpenAddTask(item._id);
                             setIsDropdownOpen(null);
                           }}
                           onDeleteProject={() => {
@@ -201,7 +203,7 @@ export default function CardsModeProjects({
 
                 <button
                   onClick={() => handleEdit(item)}
-                  className="flex-1 border relative border-[var(--border)] text-[var(--violet-text)] rounded-lg py-2 text-sm hover:bg-[var(--violet-hover-bg)] cursor-pointer hover:text-[var(--text-primary)] "
+                  className="flex-1 border relative border-[var(--border)] text-[var(--accent-color)] rounded-lg py-2 text-sm hover:bg-[var(--accent-btn-hover-color)] cursor-pointer hover:text-white "
                 >
                   Edit Info
                 </button>
@@ -236,8 +238,8 @@ export default function CardsModeProjects({
               onClick={() => setCurrentPage(num)}
               className={`px-3 py-1 rounded-lg border border-[var(--border)] ${
                 num === currentPage
-                  ? "bg-violet-500 text-white border-violet-500"
-                  : "hover:bg-gray-100"
+                  ? "bg-[var(--accent-color)] text-white border-[var(--accent-btn-hover-color)]"
+                  : "hover:bg-[var(--hover-bg)]"
               }`}
             >
               {num}
