@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function DashboardOverview() {
   const collection = [
     { name: "Total Tasks", count: 8 },

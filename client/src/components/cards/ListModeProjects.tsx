@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import ProjectDetails from "../projects/ProjectDetails";
-import { MoreHorizontal, X } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import ActionDropdown from "../projects/dropdown/ActionDropdown";
 
 // --- START: Props Definition (Must match the parent) ---

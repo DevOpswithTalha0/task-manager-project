@@ -4,11 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 
-type DropdownProps = {
-  onLogout?: () => void;
-};
-
-export default function Dropdown({ onLogout }: DropdownProps) {
+export default function Dropdown() {
   const [data, setData] = React.useState<string>("User");
   const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
   useEffect(() => {
@@ -21,9 +17,7 @@ export default function Dropdown({ onLogout }: DropdownProps) {
       );
       setData(nameParts.data.name || "User");
     };
-    const avatarLetter = data.charAt(0).toUpperCase();
-    const name = data;
-    const email = authUser.email || "";
+
     fetchName();
   }, []);
   const navigate = useNavigate();

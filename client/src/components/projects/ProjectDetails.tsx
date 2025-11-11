@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { X, MoreHorizontal } from "lucide-react";
+import { X } from "lucide-react";
 
 type Project = {
   _id: string;
@@ -264,69 +264,5 @@ export default function ProjectDetails({
         </div>
       </div>
     </>
-  );
-}
-
-function CommentsTab({ projectId }: { projectId: string | null }) {
-  const [comments, setComments] = useState<string[]>([]);
-  const [newComment, setNewComment] = useState("");
-
-  // load comments for this project
-  useEffect(() => {
-    if (!projectId) return;
-    const saved = JSON.parse(localStorage.getItem("projectComments") || "{}");
-    setComments(saved[projectId] || []);
-  }, [projectId]);
-
-  // handle adding comment
-  const handleAddComment = () => {
-    if (!newComment.trim() || !projectId) return;
-
-    const saved = JSON.parse(localStorage.getItem("projectComments") || "{}");
-    const updated = {
-      ...saved,
-      [projectId]: [...(saved[projectId] || []), newComment.trim()],
-    };
-
-    localStorage.setItem("projectComments", JSON.stringify(updated));
-    setComments(updated[projectId]);
-    setNewComment("");
-  };
-
-  return (
-    <div className="flex flex-col gap-3">
-      <ul className="flex flex-col gap-2 max-h-[200px] overflow-y-auto custom-scroll">
-        {comments.length > 0 ? (
-          comments.map((c, i) => (
-            <li
-              key={i}
-              className="bg-[var(--hover-bg)] border border-[var(--border)] rounded-lg p-2"
-            >
-              {c}
-            </li>
-          ))
-        ) : (
-          <p className="text-[var(--light-text)] italic">
-            No comments yet. Add one below!
-          </p>
-        )}
-      </ul>
-
-      <div className="flex gap-2 mt-2">
-        <input
-          type="text"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Add a comment..."
-          className="flex-1 border border-[var(--border)] rounded-lg px-3 py-2 bg-transparent focus:outline-none focus:ring-1 focus:ring-[var(--accent-color)]"
-        />
-        <button
-          onClick={handleAddComment}
-          className="bg-[var(--accent-color)] text-white px-4 py-2 rounded-lg hover:opacity-90 cursor-pointer transition"
-        >
-          Add
-        </button>
-      </div>
-    </div>
   );
 }

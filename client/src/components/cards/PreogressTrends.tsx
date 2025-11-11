@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,14 +11,6 @@ import {
 import axios from "axios";
 
 export default function ProgressTrends() {
-  const data = [
-    { week: "Jan", completed: 30 },
-    { week: "Feb", completed: 45 },
-    { week: "Mar", completed: 60 },
-    { week: "Apr", completed: 50 },
-    { week: "May", completed: 70 },
-    { week: "Jun", completed: 90 },
-  ];
   const [tasksCompletedData, setTasksCompletedData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

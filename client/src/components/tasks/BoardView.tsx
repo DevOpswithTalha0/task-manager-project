@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { MoreHorizontal, Plus, X } from "lucide-react";
 import axios from "axios";
@@ -27,8 +27,6 @@ export default function BoardView({
   const { user } = useAuth();
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [isDropdownOpen, setDropdownIsOpen] = useState(false);
-
-  const selectAllRef = useRef<HTMLInputElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownTaskId, setDropdownTaskId] = useState<string | null>(null);
   const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");

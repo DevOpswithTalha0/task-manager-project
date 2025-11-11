@@ -33,10 +33,6 @@ project-root/
 │   ├── src/
 │   │   ├── assets/          # Images, fonts, global styles
 │   │   ├── components/      # Reusable UI components
-│   │   ├── features/        # Feature-based modules (tasks, projects, auth, etc.)
-│   │   ├── hooks/           # Custom React hooks
-│   │   ├── layouts/         # App layouts (Dashboard, Auth, etc.)
-│   │   ├── lib/             # API clients, utils, helpers
 │   │   ├── pages/           # App pages
 │   │   ├── routes/          # App routing config
 │   │   ├── store/           # Zustand/Redux store
@@ -54,9 +50,6 @@ project-root/
 │   │   ├── middlewares/     # Express middlewares (auth, errors, validation)
 │   │   ├── models/          # Mongoose schemas & models
 │   │   ├── routes/          # API route definitions
-│   │   ├── services/        # Reusable logic (email, notifications, etc.)
-│   │   ├── utils/           # Helper functions
-│   │   ├── app.js           # Express app config
 │   │   └── server.js        # Server entry point
 │   ├── .env                 # Environment variables
 │   ├── package.json

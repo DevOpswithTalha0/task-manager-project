@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, List, LayoutGrid, X, Plus } from "lucide-react";
 import CardsModeProjects from "./CardsModeProjects";
 import ListModeProjects from "./ListModeProjects";
@@ -26,7 +26,6 @@ type ViewMode = "list" | "card";
 // --- END: Shared Types ---
 
 export default function ProjectCards() {
-  const projectsPerPage = 10; // Shared pagination setting
   const [viewMode, setViewMode] = useState<ViewMode>("card");
   const [searchTerm, setSearchTerm] = useState("");
 

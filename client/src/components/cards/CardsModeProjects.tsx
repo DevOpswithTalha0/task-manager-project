@@ -1,7 +1,7 @@
 // CardsModeProjects.tsx
 
 import React, { useState, useRef, useEffect } from "react";
-import { MoreHorizontal, X } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import ProjectDetails from "../projects/ProjectDetails";
 import ActionDropdown from "../projects/dropdown/ActionDropdown";
 

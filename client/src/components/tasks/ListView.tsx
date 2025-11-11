@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ArrowUpRight, MoreHorizontal } from "lucide-react";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ActionDropdown from "./dropdown/ActionDropdown";
@@ -28,7 +28,6 @@ function TaskColumn({
   tasks,
   setTasks,
   parentModalOpen,
-  onTaskDeleted,
   onTaskEdited,
 }: ColumnProps) {
   const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");

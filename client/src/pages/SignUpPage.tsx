@@ -1,4 +1,4 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import Logo from "../assets/newLogo.png";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils/utils";

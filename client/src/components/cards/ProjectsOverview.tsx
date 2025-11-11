@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 type ProjectStats = {
   totalCount: number;
   completedCount: number;
@@ -9,7 +9,6 @@ type ProjectStats = {
 };
 export default function ProjectsOverview() {
   const [stats, setStats] = useState<ProjectStats | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -25,8 +24,6 @@ export default function ProjectsOverview() {
         setStats(res.data);
       } catch (error) {
         console.error("Failed to fetch task stats", error);
-      } finally {
-        setLoading(false);
       }
     };
 

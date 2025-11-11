@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { RadialBarChart, RadialBar, PolarAngleAxis, Tooltip } from "recharts";
 import { toast } from "react-toastify";

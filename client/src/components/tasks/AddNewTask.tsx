@@ -4,7 +4,7 @@ import { DayPicker } from "react-day-picker";
 import axios from "axios";
 import "react-day-picker/dist/style.css";
 import { handleError } from "../../utils/utils";
-import { getAuthUser } from "../../utils/auth";
+
 import { toast } from "react-toastify";
 type Task = {
   _id: string;

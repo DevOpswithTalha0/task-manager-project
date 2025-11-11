@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 type TaskStats = {
@@ -11,7 +11,6 @@ type TaskStats = {
 };
 export default function TasksOverview() {
   const [stats, setStats] = useState<TaskStats | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -31,8 +30,6 @@ export default function TasksOverview() {
         }
       } catch (error) {
         console.error("Failed to fetch task stats", error);
-      } finally {
-        setLoading(false);
       }
     };
 

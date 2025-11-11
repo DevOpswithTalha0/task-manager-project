@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sun, Moon, Menu, Search, User } from "lucide-react";
 import Dropdown from "../common/Dropdown";
 import { useSidebarStore } from "../../store/useSidebarStore";
@@ -15,11 +15,10 @@ export default function DashboardHeader({
   title,
   subtitle,
   showSearch = true,
-  onToggleSidebar,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const { toggleSidebar } = useSidebarStore();
-  const { theme, setTheme, isDark } = useTheme();
+  const { setTheme, isDark } = useTheme();
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 

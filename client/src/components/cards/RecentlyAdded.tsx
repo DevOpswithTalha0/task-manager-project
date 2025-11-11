@@ -1,10 +1,6 @@
-import React, { useState } from "react";
 import { Bold, Italic, Underline, AlignLeft } from "lucide-react";
 
 export default function RecentlyAdded() {
-  const [note, setNote] = useState("");
-  const collection = [{}];
-
   return (
     <div className="flex flex-col border border-[var(--border)]  bg-[var(--cards-bg)]  rounded-xl ">
       {/* Header */}

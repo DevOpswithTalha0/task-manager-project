@@ -1,5 +1,3 @@
-import React from "react";
-import tasks from "../../assets/features/tasks.png";
 import growth from "../../assets/features/growth.jpg";
 import habits from "../../assets/features/habits.jpg";
 import organized from "../../assets/features/organized.jpg";
