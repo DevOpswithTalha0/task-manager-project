@@ -71,7 +71,7 @@ export default function NotificationsDropdown({
   const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [socket, setSocket] = useState<Socket | null>(null);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,39 +89,23 @@ export default function NotificationsDropdown({
   }, [onClose]);
 
   // Initialize Socket.IO connection
+  const socketRef = useRef<Socket | null>(null);
+
   useEffect(() => {
-    if (!authUser || !authUser.token) {
-      console.error("User not found or missing token. Please log in.");
-      return;
-    }
-
     const newSocket = io("http://localhost:3000", {
-      auth: {
-        token: authUser.token,
-      },
+      auth: { token: authUser.token },
     });
+    socketRef.current = newSocket;
 
-    newSocket.on("connect", () => {
-      console.log("Connected to notification server");
-      // Join user's personal room
-      newSocket.emit("join-user-room", authUser.id);
-    });
-
-    newSocket.on("new-notification", (notification: Notification) => {
+    newSocket.on("new-notification", (notification) => {
       setNotifications((prev) => [notification, ...prev]);
       toast.info(notification.title);
     });
 
-    newSocket.on("disconnect", () => {
-      console.log("Disconnected from notification server");
-    });
-
-    setSocket(newSocket);
-
     return () => {
       newSocket.disconnect();
     };
-  }, [authUser?.token, authUser?.id]);
+  }, []);
 
   // Fetch notifications on mount
   useEffect(() => {

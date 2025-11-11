@@ -1,25 +1,10 @@
-import React, { useEffect } from "react";
 import { User, Settings, LogOut, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import axios from "axios";
 
 export default function Dropdown() {
-  const [data, setData] = React.useState<string>("User");
   const authUser = JSON.parse(localStorage.getItem("authUser") || "{}");
-  useEffect(() => {
-    const fetchName = async () => {
-      const nameParts = await axios.get(
-        "http://localhost:3000/projects/stats",
-        {
-          headers: { Authorization: `Bearer ${authUser.token}` },
-        }
-      );
-      setData(nameParts.data.name || "User");
-    };
 
-    fetchName();
-  }, []);
   const navigate = useNavigate();
   const { logout } = useAuth();
   const items = [

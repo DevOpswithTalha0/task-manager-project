@@ -86,7 +86,7 @@ export default function Account() {
       });
 
       // Assuming the API returns the updated user data (including the new email)
-      const newEmail = formData.newEmail || formData.email;
+      const newEmail = res.data.email || formData.email;
 
       // Update local state with the new email and clear input fields
       setFormData((prev) => ({
