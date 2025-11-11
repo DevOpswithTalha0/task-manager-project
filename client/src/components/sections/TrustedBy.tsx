@@ -6,18 +6,25 @@ export default function TrustedBy() {
     "Agencies",
     "Freelancers",
     "Product Teams",
+    "Marketing Teams",
   ];
 
   return (
-    <section className="bg-violet-50 mt-16 py-8 px-6 md:px-12 lg:px-24 text-center w-[88%] rounded-3xl">
-      <h2 className="text-sm md:text-base font-medium text-slate-800 mb-8">
+    <section className="mt-10 py-12 px-6 sm:px-10 lg:px-20 text-center bg-gradient-to-b bg-transplant rounded-3xl w-full mx-auto">
+      {/* Heading */}
+      <h2 className="text-base sm:text-lg text-gray-700 mb-10 font-medium tracking-wide">
         Trusted by teams and individuals around the world
       </h2>
-      <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+
+      {/* Category Pills */}
+      <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
         {categories.map((item, index) => (
           <div
             key={index}
-            className="text-lg font-medium bg-white text-gray-700  px-6 py-3 rounded-full shadow-sm hover:shadow-md transition"
+            className="text-sm sm:text-base md:text-lg font-medium bg-white text-gray-700 
+              px-6 sm:px-8 py-3 sm:py-4 rounded-full border border-gray-200 
+              shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-violet-300 
+              transition-all duration-300 cursor-default"
           >
             {item}
           </div>

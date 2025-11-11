@@ -63,25 +63,30 @@ const GetProjects = async (req: Request, res: Response) => {
       },
      
       {
-        $lookup: {
-          from: "tasks", 
-          localField: "_id",
-          foreignField: "projectId",
-          as: "tasks",
-        },
-      },
-      
-      {
-       $addFields: {
-  totalTasks: { $size: "$tasks" },
+  $lookup: {
+    from: "tasks",
+    localField: "_id",
+    foreignField: "projectId",
+    as: "tasks",
+  },
+},
+{
+  $addFields: {
+    totalTasks: { $size: "$tasks" },
+    completedTasks: { 
+      $size: {
+        $filter: {
+          input: "$tasks",
+          cond: { $eq: ["$$this.status", "completed"] }
+        }
+      }
+    }
+  }
+},
+{
+  $project: { tasks: 0 },
 }
 
-      },
-      {
-        $project: {
-          tasks: 0,
-        },
-      },
     ]);
 
     if (!projectsWithTaskCount || projectsWithTaskCount.length === 0) {

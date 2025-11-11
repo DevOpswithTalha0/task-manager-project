@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils/utils";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/newLogo.jpg";
+import Logo from "../assets/newLogo.png";
 type LoginInfo = {
   email: string;
   password: string;

@@ -1,5 +1,5 @@
 import React, { useState, type ChangeEvent, type FormEvent } from "react";
-import Logo from "../assets/newLogo.jpg";
+import Logo from "../assets/newLogo.png";
 import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../utils/utils";
 import { useNavigate } from "react-router-dom";

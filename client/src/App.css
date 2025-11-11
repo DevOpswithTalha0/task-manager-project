@@ -101,7 +101,7 @@ html.dark{
     --accent-btn-pink-700: #db347f;
     --accent-btn-blue-700: #306ccc;
     --accent-btn-green-700: #109e44;
-   --accent-soft-bg: color-mix(in srgb, var(--accent-bg-color) 50%, var(--bg));
+   --accent-soft-bg: color-mix(in srgb, var(--accent-bg-color) 40%, var(--bg));
   --accent-soft-border: color-mix(in srgb, var(--accent-color) 20%, var(--border));
   --accent-violet-600: #a789ff;
   --accent-pink-600: #f472b6;
@@ -139,6 +139,7 @@ html {
 }
 h1, h2, h3, .logo {
   font-family: var(--font-heading);
+  
 }
 
 body, p, span, button, input {

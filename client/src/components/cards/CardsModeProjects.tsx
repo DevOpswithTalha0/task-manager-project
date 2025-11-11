@@ -182,12 +182,29 @@ export default function CardsModeProjects({
               <div>
                 <div className="flex justify-between items-center text-sm mb-1">
                   <p className="text-[var(--light-text)]  ">Progress</p>
-                  <p className="font-medium">{item.progress || 0}%</p>
+                  <p className="font-medium">
+                    {" "}
+                    {item.totalTasks && item.totalTasks > 0
+                      ? Math.round(
+                          ((item.completedTasks || 0) / item.totalTasks) * 100
+                        )
+                      : 0}
+                    %
+                  </p>
                 </div>
                 <div className="h-2 w-full bg-[var(--inside-card-bg)] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-violet-500"
-                    style={{ width: `${item.progress || 0}%` }}
+                    className="h-full bg-[var(--accent-color)] rounded-full transition-all"
+                    style={{
+                      width: `${
+                        item.totalTasks && item.totalTasks > 0
+                          ? Math.round(
+                              ((item.completedTasks || 0) / item.totalTasks) *
+                                100
+                            )
+                          : 0
+                      }%`,
+                    }}
                   ></div>
                 </div>
               </div>

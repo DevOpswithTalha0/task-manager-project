@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Image from "../../assets/newLogo.jpg";
+import Image from "../../assets/newLogo.png";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,8 +25,8 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-2">
           <img src={Image} alt="Planora Logo" className="h-7 w-7" />
-          <h1 className="text-2xl font-heading font-bold text-gray-800 cursor-pointer">
-            Planora
+          <h1 className="text-2xl font-heading font-medium text-gray-700 cursor-pointer">
+            PlanOra
           </h1>
         </div>
 
@@ -56,7 +56,7 @@ export default function Navbar() {
           </Link>
           <Link
             to="/register"
-            className="px-5 py-2.5 bg-violet-500 text-white rounded-full font-medium cursor-pointer hover:bg-violet-600 transition"
+            className="px-5 py-2.5 bg-violet-500 text-white rounded-full font-medium cursor-pointer hover:bg-violet-600 transition hover:-translate-y-1 hover:scale-105"
           >
             Get Started
           </Link>

@@ -356,7 +356,7 @@ export default function AddNewTask({
           </button>
           {isCalendarOpen && (
             <div
-              className="absolute z-20 -top-26 bg-[var(--bg)] border border[var(--border)]
+              className="absolute z-20 -top-26 bg-[var(--bg)] border border-[var(--border)]
                             rounded-xl shadow-lg p-3 min-w-[280px] overflow-hidden"
             >
               <DayPicker

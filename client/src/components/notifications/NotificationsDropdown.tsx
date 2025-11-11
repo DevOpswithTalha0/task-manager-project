@@ -222,11 +222,9 @@ export default function NotificationsDropdown({
       <div className="flex items-center justify-between px-4 py-3 bg-[var(--accent-color)]  border-b border-[var(--border)] ">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-white " />
-          <p className="font-semibold text-lg text-[var(--primary-text)] ">
-            Notifications
-          </p>
+          <p className="font-semibold text-lg text-white ">Notifications</p>
           {unreadCount > 0 && (
-            <span className="bg-red-500 text-[var(--primary-text)] text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
+            <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
               {unreadCount}
             </span>
           )}
@@ -245,7 +243,7 @@ export default function NotificationsDropdown({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2 max-h-96">
+      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2 max-h-116 ">
         {isLoading ? (
           <div className="text-center py-4 text-[var(--light-text)] ">
             Loading notifications...
@@ -325,7 +323,7 @@ export default function NotificationsDropdown({
           </p>
           <button
             onClick={fetchNotifications}
-            className="text-xs text-[var(--accent-color)]  hover:underline font-medium"
+            className="text-xs text-[var(--accent-color)]  hover:underline font-medium cursor-pointer"
           >
             Refresh
           </button>
