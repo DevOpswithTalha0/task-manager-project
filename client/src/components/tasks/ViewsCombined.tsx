@@ -47,9 +47,7 @@ export default function ViewsCombined() {
   const mapStatus = (status: string): Task["status"] => {
     switch (status.toLowerCase()) {
       case "to do":
-      case "to do":
         return "to do";
-      case "in progress":
       case "in progress":
         return "in progress";
       case "completed":
