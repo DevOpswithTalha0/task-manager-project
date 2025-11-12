@@ -25,7 +25,7 @@ import ProjectsModel from "./models/ProjectsModel"; // Ensure you have ProjectsM
 import { createNotification } from "./controllers/NotificationsController";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // Middleware
 app.use(cors());
@@ -121,6 +121,7 @@ app.get("/ping", (req: Request, res: Response) => {
 });
 
 // Start the server
-server.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
+
