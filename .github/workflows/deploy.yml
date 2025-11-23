@@ -32,7 +32,7 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > my-ec2-key
           chmod 600 my-ec2-key
 
-      # ---------------- DEPLOY TO EC2 ---------------- #
+      #  DEPLOY TO EC2  #
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i my-ec2-key ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
