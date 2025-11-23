@@ -36,7 +36,7 @@ jobs:
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i my-ec2-key ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ec2-user/projects/task-project-manager
+            cd /home/ec2-user/projects/task-project-manager//task-manager-project
             docker compose pull
             docker compose up -d
           EOF
