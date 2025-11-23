@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-# ---------------- BUILD & PUSH IMAGES ---------------- #
+#  BUILD & PUSH IMAGES  #
       - name: Build images using docker-compose
         run: docker compose build --no-cache
 
