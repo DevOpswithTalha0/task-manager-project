@@ -1,5 +1,6 @@
 services:
   frontend:
+    image: talhaejaz0/task-manager:frontend
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
       - todo-network
 
   backend:
+    image: talhaejaz0/task-manager:backend
     build:
       context: ./server
       dockerfile: Dockerfile
