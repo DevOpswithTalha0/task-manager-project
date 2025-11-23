@@ -26,7 +26,7 @@ jobs:
       - name: Push images to Docker Hub
         run: docker compose push
 
-      # ---------------- PREPARE SSH KEY ---------------- #
+      #  PREPARE SSH KEY #
       - name: Setup SSH key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > my-ec2-key
