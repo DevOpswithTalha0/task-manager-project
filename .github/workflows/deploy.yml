@@ -21,7 +21,7 @@ jobs:
 
 # ---------------- BUILD & PUSH IMAGES ---------------- #
       - name: Build images using docker-compose
-        run: docker-compose build --no-cache
+        run: docker compose build --no-cache
 
       - name: Push images to Docker Hub
         run: docker-compose push
