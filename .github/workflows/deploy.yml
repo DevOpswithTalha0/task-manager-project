@@ -24,7 +24,7 @@ jobs:
         run: docker compose build --no-cache
 
       - name: Push images to Docker Hub
-        run: docker-compose push
+        run: docker compose push
 
       # ---------------- PREPARE SSH KEY ---------------- #
       - name: Setup SSH key
@@ -37,6 +37,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i my-ec2-key ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/project
-            docker-compose pull
-            docker-compose up -d
+            docker compose pull
+            docker compose up -d
           EOF
