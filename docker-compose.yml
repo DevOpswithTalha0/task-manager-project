@@ -1,21 +1,25 @@
 services:
   frontend:
-    image: talhaejaz0/task-manager-frontend:latest
-    container_name: task-frontend
+    image: talhaejaz0/task-manager:frontend
+    build:
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - "3000:80"
-    restart: always
+    depends_on:
+      - backend
     networks:
       - todo-network
 
   backend:
-    image: talhaejaz0/task-manager-backend:latest
-    container_name: task-backend
+    image: talhaejaz0/task-manager:backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: "mongodb+srv://hani:hani0817@cluster0.hhrwib9.mongodb.net/tasks-management?retryWrites=true&w=majority"
-    restart: always
+      - MONGO_URI=mongodb+srv://hani:hani0817@cluster0.hhrwib9.mongodb.net/tasks-management?retryWrites=true&w=majority&appName=Cluster0
     networks:
       - todo-network
 
