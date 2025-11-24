@@ -40,6 +40,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/my-ec2-key ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ec2-user/projects/task-project-manager/task-manager-project
+            git pull origin main
             docker compose pull
             docker compose up -d --remove-orphans
           EOF
