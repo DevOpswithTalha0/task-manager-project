@@ -1,33 +1,21 @@
 services:
   frontend:
-    image: talhaejaz0/task-manager:frontend
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: talhaejaz0/task-manager-frontend:latest
+    container_name: task-frontend
     ports:
-      - "3000:5173"
-    depends_on:
-      - backend
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    command: npm run dev -- --host
+      - "3000:80"
+    restart: always
     networks:
       - todo-network
 
   backend:
-    image: talhaejaz0/task-manager:backend
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: talhaejaz0/task-manager-backend:latest
+    container_name: task-backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    command: npm run dev
     environment:
-      - MONGO_URI=mongodb+srv://hani:hani0817@cluster0.hhrwib9.mongodb.net/tasks-management?retryWrites=true&w=majority&appName=Cluster0
+      MONGO_URI: "mongodb+srv://hani:hani0817@cluster0.hhrwib9.mongodb.net/tasks-management?retryWrites=true&w=majority"
+    restart: always
     networks:
       - todo-network
 

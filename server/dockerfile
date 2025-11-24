@@ -2,15 +2,17 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Copy only package.json to install dependencies efficiently
 COPY package*.json ./
 
-RUN npm install --include=dev
+# Install only production deps
+RUN npm install --production
 
+# Copy source code
 COPY . .
 
-#ENV NODE_ENV=development
-#RUN npm run build
-
+# Expose app port
 EXPOSE 5000
 
-CMD ["npm", "run", "dev"]
+# Run production server
+CMD ["npm", "start"]
